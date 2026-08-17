@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filafinder - Logo & Asset Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="max-w-md w-full bg-slate-800 rounded-xl shadow-2xl p-6 md:p-8 border border-slate-700 text-center">
+        <h1 class="text-2xl font-bold text-cyan-400 mb-1">Filafinder Logo</h1>
+        <p class="text-slate-400 text-sm mb-6">Vector Graphic & Favicon Generator</p>
+
+        <!-- Logo Preview Box -->
+        <div class="bg-slate-900 p-6 rounded-xl border border-slate-700 flex items-center justify-center mb-6 shadow-inner">
+            <svg id="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40 drop-shadow-lg">
+                <defs>
+                    <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#22d3ee" />
+                        <stop offset="100%" stop-color="#0284c7" />
+                    </linearGradient>
+                    <linearGradient id="glassGlint" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#ffffff" stop-opacity="0.3" />
+                        <stop offset="50%" stop-color="#ffffff" stop-opacity="0.05" />
+                        <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+                    </linearGradient>
+                </defs>
+
+                <!-- Background Glow / Ring -->
+                <circle cx="100" cy="100" r="90" fill="#1e293b" stroke="#334155" stroke-width="2" />
+
+                <!-- Filament Strand (Curled Loop) -->
+                <path d="M 45 130 Q 80 130 100 100 Q 120 70 155 70" fill="none" stroke="url(#cyanGrad)" stroke-width="14" stroke-linecap="round" />
+                
+                <!-- Magnifying Glass Handle -->
+                <line x1="115" y1="115" x2="155" y2="155" stroke="#475569" stroke-width="12" stroke-linecap="round" />
+                <line x1="115" y1="115" x2="155" y2="155" stroke="#94a3b8" stroke-width="6" stroke-linecap="round" />
+
+                <!-- Magnifying Glass Rim -->
+                <circle cx="85" cy="85" r="42" fill="none" stroke="#334155" stroke-width="8" />
+                <circle cx="85" cy="85" r="42" fill="none" stroke="url(#cyanGrad)" stroke-width="6" />
+
+                <!-- Glass Lens Reflection -->
+                <circle cx="85" cy="85" r="38" fill="url(#glassGlint)" />
+            </svg>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="space-y-3">
+            <button onclick="downloadSVG()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-3 px-4 rounded-lg transition-colors shadow-lg flex items-center justify-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                <span>Download .SVG Logo</span>
+            </button>
+            <button onclick="downloadICO()" class="w-full bg-slate-700 hover:bg-slate-600 text-cyan-300 font-semibold py-3 px-4 rounded-lg transition-colors border border-slate-600 flex items-center justify-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span>Download .ICO Favicon</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Hidden canvas for rasterizing to ICO -->
+    <canvas id="icon-canvas" width="256" height="256" class="hidden"></canvas>
+
+    <script>
+        function getSVGSource() {
+            const svgElement = document.getElementById('logo-svg');
+            let svgString = new XMLSerializer().serializeToString(svgElement);
+            return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
+        }
+
+        function downloadSVG() {
+            const svgElement = document.getElementById('logo-svg');
+            let svgString = new XMLSerializer().serializeToString(svgElement);
+            const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'filafinder-logo.svg';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function downloadICO() {
+            const canvas = document.getElementById('icon-canvas');
+            const ctx = canvas.getContext('2d');
+            const svgString = new XMLSerializer().serializeToString(document.getElementById('logo-svg'));
+            
+            const img = new Image();
+            const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+
+            img.onload = function() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                // Convert canvas to PNG/ICO download stream
+                canvas.toBlob(function(pngBlob) {
+                    const pngUrl = URL.createObjectURL(pngBlob);
+                    const link = document.createElement('a');
+                    link.href = pngUrl;
+                    link.download = 'favicon.ico';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(pngUrl);
+                }, 'image/png');
+                
+                URL.revokeObjectURL(url);
+            };
+            img.src = url;
+        }
+    </script>
+</body>
+</html>
