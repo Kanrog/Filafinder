@@ -20,7 +20,7 @@ Instead of navigating long lists of technical specifications, users are guided t
 * **CF/GF Reinforced Versions:** Carbon and glass fiber-infused variants for maximum stiffness and structural rigidity.
 
 ## Live Demo
-Check out the live site here: [http://kanrog.github.io/FilaFinder](http://kanrog.github.io/FilaFinder)
+Check out the live site here: [http://kanrog.github.io/Filafinder](http://kanrog.github.io/Filafinder)
 
 ## Built With
 * HTML5
