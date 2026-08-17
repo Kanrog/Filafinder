@@ -3,116 +3,260 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Filafinder - Logo & Asset Generator</title>
+    <title>Filafinder - What 3D Printer Filament Do You Need?</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="filafinder-icon.ico" type="image/x-icon">
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4">
+<body class="bg-zinc-900 text-zinc-100 min-h-screen flex flex-col items-center justify-center p-6 md:p-10">
 
-    <div class="max-w-md w-full bg-slate-800 rounded-xl shadow-2xl p-6 md:p-8 border border-slate-700 text-center">
-        <h1 class="text-2xl font-bold text-cyan-400 mb-1">Filafinder Logo</h1>
-        <p class="text-slate-400 text-sm mb-6">Vector Graphic & Favicon Generator</p>
-
-        <!-- Logo Preview Box -->
-        <div class="bg-slate-900 p-6 rounded-xl border border-slate-700 flex items-center justify-center mb-6 shadow-inner">
-            <svg id="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40 drop-shadow-lg">
-                <defs>
-                    <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#22d3ee" />
-                        <stop offset="100%" stop-color="#0284c7" />
-                    </linearGradient>
-                    <linearGradient id="glassGlint" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#ffffff" stop-opacity="0.3" />
-                        <stop offset="50%" stop-color="#ffffff" stop-opacity="0.05" />
-                        <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
-                    </linearGradient>
-                </defs>
-
-                <!-- Background Glow / Ring -->
-                <circle cx="100" cy="100" r="90" fill="#1e293b" stroke="#334155" stroke-width="2" />
-
-                <!-- Filament Strand (Curled Loop) -->
-                <path d="M 45 130 Q 80 130 100 100 Q 120 70 155 70" fill="none" stroke="url(#cyanGrad)" stroke-width="14" stroke-linecap="round" />
-                
-                <!-- Magnifying Glass Handle -->
-                <line x1="115" y1="115" x2="155" y2="155" stroke="#475569" stroke-width="12" stroke-linecap="round" />
-                <line x1="115" y1="115" x2="155" y2="155" stroke="#94a3b8" stroke-width="6" stroke-linecap="round" />
-
-                <!-- Magnifying Glass Rim -->
-                <circle cx="85" cy="85" r="42" fill="none" stroke="#334155" stroke-width="8" />
-                <circle cx="85" cy="85" r="42" fill="none" stroke="url(#cyanGrad)" stroke-width="6" />
-
-                <!-- Glass Lens Reflection -->
-                <circle cx="85" cy="85" r="38" fill="url(#glassGlint)" />
-            </svg>
+    <div class="max-w-2xl w-full bg-zinc-800/90 rounded-2xl shadow-2xl p-8 md:p-12 border border-zinc-700 backdrop-blur-md">
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-3xl md:text-5xl font-extrabold text-teal-400 tracking-tight">Filafinder</h1>
+            <p class="text-zinc-400 text-base md:text-lg mt-3">Navigate structural, aesthetic, and mechanical requirements for your project.</p>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="space-y-3">
-            <button onclick="downloadSVG()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-3 px-4 rounded-lg transition-colors shadow-lg flex items-center justify-center space-x-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                <span>Download .SVG Logo</span>
-            </button>
-            <button onclick="downloadICO()" class="w-full bg-slate-700 hover:bg-slate-600 text-cyan-300 font-semibold py-3 px-4 rounded-lg transition-colors border border-slate-600 flex items-center justify-center space-x-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                <span>Download .ICO Favicon</span>
+        <!-- Progress Bar -->
+        <div class="w-full bg-zinc-700 h-3 rounded-full mb-8 overflow-hidden">
+            <div id="progress-bar" class="bg-pink-500 h-full transition-all duration-300" style="width: 20%;"></div>
+        </div>
+
+        <!-- Question Container -->
+        <div id="quiz-container">
+            <h2 id="question-text" class="text-xl md:text-2xl font-semibold mb-6 text-zinc-200"></h2>
+            <div id="options-container" class="space-y-4">
+                <!-- Dynamically injected options -->
+            </div>
+        </div>
+
+        <!-- Restart Button (Hidden initially) -->
+        <div id="restart-container" class="hidden text-center mt-8">
+            <button onclick="startQuiz()" class="bg-pink-600 hover:bg-pink-500 text-white font-bold text-lg px-8 py-3 rounded-xl transition-colors shadow-lg hover:shadow-pink-500/25">
+                Start Over
             </button>
         </div>
     </div>
 
-    <!-- Hidden canvas for rasterizing to ICO -->
-    <canvas id="icon-canvas" width="256" height="256" class="hidden"></canvas>
-
     <script>
-        function getSVGSource() {
-            const svgElement = document.getElementById('logo-svg');
-            let svgString = new XMLSerializer().serializeToString(svgElement);
-            return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
+        const questions = [
+            {
+                id: 'primary_goal',
+                question: 'What is the primary characteristic or application you need for this project?',
+                options: [
+                    { text: 'Aesthetics / Visual Display (Smooth, Matte, or Glossy/Silk finishes)', next: 'aesthetic_type' },
+                    { text: 'Flexibility, Bending, or Impact Absorption (Rubber-like or Living Hinges)', next: 'flex_type' },
+                    { text: 'General Mechanical Utility / Strong Functional Parts', next: 'environment_functional' },
+                    { text: 'Extreme Engineering: High Heat, Heavy Load, or Structural Rigidity', next: 'extreme_type' }
+                ]
+            },
+            // --- AESTHETICS BRANCH ---
+            {
+                id: 'aesthetic_type',
+                question: 'What kind of surface finish are you looking for?',
+                options: [
+                    { text: 'High gloss, metallic sheen, or silky luster', result: 'SILK_PLA' },
+                    { text: 'Smooth, non-reflective, hides layer lines well', result: 'MATTE_PLA' },
+                    { text: 'Standard clean look, easy and cheap prototyping', result: 'PLA' }
+                ]
+            },
+            // --- FLEXIBILITY BRANCH ---
+            {
+                id: 'flex_type',
+                question: 'Does the part need rubber-like elasticity or fatigue-resistant bending (like a snap hinge)?',
+                options: [
+                    { text: 'Flexible / Elastic (Gaskets, phone cases, wheels, feet)', result: 'TPU' },
+                    { text: 'Semi-rigid with extreme hinge/fatigue resistance (Living hinges, chemical containers)', result: 'PP' }
+                ]
+            },
+            // --- GENERAL FUNCTIONAL BRANCH ---
+            {
+                id: 'environment_functional',
+                question: 'Where will this functional part live?',
+                options: [
+                    { text: 'Indoor / Standard room environment', next: 'indoor_strength' },
+                    { text: 'Outdoor (Exposed to direct sunlight and weather)', next: 'outdoor_choice' }
+                ]
+            },
+            {
+                id: 'indoor_strength',
+                question: 'How much mechanical stress will the indoor part experience?',
+                options: [
+                    { text: 'Low stress (Brackets, light clips, desk organizers)', result: 'PETG' },
+                    { text: 'High stress / Rigidity needed -> Do you want a Fiber-Reinforced (CF/GF) material?', next: 'hardware_check_cf' }
+                ]
+            },
+            {
+                id: 'outdoor_choice',
+                question: 'Does the outdoor part require high impact strength or structural load handling?',
+                options: [
+                    { text: 'Standard outdoor utility (Weatherproof housing, plant pots, clips)', result: 'ASA' },
+                    { text: 'Heavy-duty structural outdoor part -> Consider fiber-reinforced ASA or PC', next: 'extreme_type' }
+                ]
+            },
+            // --- EXTREME ENGINEERING BRANCH ---
+            {
+                id: 'extreme_type',
+                question: 'What is the primary engineering challenge for this part?',
+                options: [
+                    { text: 'Extreme heat resistance & heavy industrial load (Under-hood, high torque gears)', next: 'hardware_check_pc' },
+                    { text: 'Maximum stiffness, zero flex, lightweight structural rigidity', next: 'hardware_check_cf' }
+                ]
+            },
+            // --- HARDWARE GATES ---
+            {
+                id: 'hardware_check_cf',
+                question: 'Do you have a hardened steel nozzle and an abrasive-safe setup?',
+                options: [
+                    { text: 'Yes (Hardened nozzle ready for Carbon/Glass Fiber)', result: 'CF_GF_FILAMENT' },
+                    { text: 'No (Using a standard brass nozzle)', next: 'fallback_standard_engineering' }
+                ]
+            },
+            {
+                id: 'hardware_check_pc',
+                question: 'Is your printer fully enclosed capable of handling high ambient temps (>95°C bed, high hotend temp)?',
+                options: [
+                    { text: 'Yes, heavy-duty enclosed printer.', result: 'PC' },
+                    { text: 'No, standard or open enclosure printer.', result: 'ASA' }
+                ]
+            },
+            {
+                id: 'fallback_standard_engineering',
+                question: 'Since you have a standard nozzle, do you have an enclosure for printing high-temp engineering plastics?',
+                options: [
+                    { text: 'Yes, enclosed printer.', result: 'ASA' },
+                    { text: 'No enclosure (Open printer).', result: 'PETG' }
+                ]
+            }
+        ];
+
+        const filamentData = {
+            'PLA': {
+                title: 'Standard PLA',
+                desc: 'The gold standard for ease of printing, sharp details, and low warp. Perfect for general prototypes and indoor visual models.',
+                bestFor: 'Miniatures, non-load-bearing parts, desk accessories.',
+                settings: 'Nozzle: 190–210°C | Bed: 50–60°C | Enclosure: Not needed'
+            },
+            'SILK_PLA': {
+                title: 'Silk PLA',
+                desc: 'Blended with additives to yield a high-gloss, reflective, shiny finish that brilliantly masks layer lines. Slightly lower layer adhesion than standard PLA.',
+                bestFor: 'Vases, display art, cosmetic models, statues.',
+                settings: 'Nozzle: 200–220°C | Bed: 50–60°C | Enclosure: Not needed'
+            },
+            'MATTE_PLA': {
+                title: 'Matte PLA',
+                desc: 'Formulated with foaming agents or specialized fillers to eliminate plastic shine, resulting in a smooth, flat stone or paper-like texture.',
+                bestFor: 'Architectural models, modern displays, stealth-look items.',
+                settings: 'Nozzle: 200–215°C | Bed: 50–60°C | Enclosure: Not needed'
+            },
+            'TPU': {
+                title: 'TPU (Thermoplastic Polyurethane)',
+                desc: 'A flexible, highly elastic elastomer with exceptional impact absorption, tear resistance, and wear tolerance.',
+                bestFor: 'Phone cases, RC car tires, dampening feet, wearable items.',
+                settings: 'Nozzle: 210–230°C | Bed: 30–60°C | Print Slow (20-30 mm/s)'
+            },
+            'PP': {
+                title: 'PP (Polypropylene)',
+                desc: 'Ultra-lightweight, chemically resistant, and offers incredible fatigue resistance, making it uniquely suited for parts that bend repeatedly.',
+                bestFor: 'Living hinges, snap-fit functional containers, chemical vials.',
+                settings: 'Nozzle: 220–250°C | Bed: 85–100°C (Requires specialized adhesive/tape)'
+            },
+            'PETG': {
+                title: 'PETG',
+                desc: 'A tough, dependable workhorse offering good layer adhesion, mild chemical resistance, and better temperature limits than PLA.',
+                bestFor: 'Mechanical brackets, general functional prints, water-resistant containers.',
+                settings: 'Nozzle: 230–250°C | Bed: 70–80°C | Enclosure: Not needed'
+            },
+            'ASA': {
+                title: 'ASA (Acrylonitrile Styrene Acrylate)',
+                desc: 'The definitive choice for outdoor endurance. Mechanically similar to ABS, but features robust structural UV stabilization that prevents weather yellowing.',
+                bestFor: 'Automotive exterior parts, drone frames, exterior electronics housings.',
+                settings: 'Nozzle: 240–260°C | Bed: 90–100°C | Enclosure: Required'
+            },
+            'PC': {
+                title: 'PC (Polycarbonate)',
+                desc: 'An extreme engineering thermoplastic boasting massive impact strength, high rigidity, and thermal stability up to roughly 110–140°C.',
+                bestFor: 'Heavy-load industrial components, high-heat enclosures, structural clamps.',
+                settings: 'Nozzle: 260–310°C | Bed: 110–135°C | Enclosure: Fully Enclosed & Vented'
+            },
+            'CF_GF_FILAMENT': {
+                title: 'Carbon/Glass Fiber Reinforced Filament (CF/GF-PLA, CF-PETG, or CF-ASA/PA)',
+                desc: 'Imbuing base polymers with chopped fibers drastically increases stiffness, dimensional stability, and eliminates warping while leaving a matte, textured finish.',
+                bestFor: 'High-rigidity drone frames, stiff mechanical mounts, industrial jigs and fixtures.',
+                settings: 'Nozzle: Matches base polymer (Hardened Steel Required) | Bed: Varies by base'
+            }
+        };
+
+        let currentStep = 'primary_goal';
+        let historyStack = [];
+
+        function startQuiz() {
+            currentStep = 'primary_goal';
+            historyStack = [];
+            document.getElementById('quiz-container').style.display = 'block';
+            document.getElementById('restart-container').classList.add('hidden');
+            renderQuestion();
         }
 
-        function downloadSVG() {
-            const svgElement = document.getElementById('logo-svg');
-            let svgString = new XMLSerializer().serializeToString(svgElement);
-            const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
+        function renderQuestion() {
+            const questionObj = questions.find(q => q.id === currentStep);
+            document.getElementById('question-text').innerText = questionObj.question;
             
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'filafinder-logo.svg';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            questionObj.options.forEach(opt => {
+                const button = document.createElement('button');
+                button.className = 'w-full text-left bg-zinc-700/80 hover:bg-teal-600 hover:text-white p-5 rounded-xl transition-all duration-200 border border-zinc-600 font-medium text-base md:text-lg shadow-md';
+                button.innerText = opt.text;
+                
+                button.onclick = () => {
+                    historyStack.push(currentStep);
+                    if (opt.result) {
+                        renderResult(opt.result);
+                    } else {
+                        currentStep = opt.next;
+                        updateProgress();
+                        renderQuestion();
+                    }
+                };
+                optionsContainer.appendChild(button);
+            });
+            updateProgress();
         }
 
-        function downloadICO() {
-            const canvas = document.getElementById('icon-canvas');
-            const ctx = canvas.getContext('2d');
-            const svgString = new XMLSerializer().serializeToString(document.getElementById('logo-svg'));
-            
-            const img = new Image();
-            const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-
-            img.onload = function() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                
-                // Convert canvas to PNG/ICO download stream
-                canvas.toBlob(function(pngBlob) {
-                    const pngUrl = URL.createObjectURL(pngBlob);
-                    const link = document.createElement('a');
-                    link.href = pngUrl;
-                    link.download = 'favicon.ico';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(pngUrl);
-                }, 'image/png');
-                
-                URL.revokeObjectURL(url);
+        function renderResult(filamentKey) {
+            const data = filamentData[filamentKey] || {
+                title: filamentKey,
+                desc: 'Recommended material based on your custom configuration criteria.',
+                bestFor: 'Targeted application use',
+                settings: 'Check roll specifications'
             };
-            img.src = url;
+
+            document.getElementById('quiz-container').innerHTML = `
+                <div class="text-center py-2">
+                    <span class="text-xs uppercase tracking-wider bg-teal-950 text-teal-300 border border-teal-800 px-4 py-1.5 rounded-full font-bold">Optimal Choice</span>
+                    <h2 class="text-3xl font-extrabold text-teal-400 mt-4 mb-3">${data.title}</h2>
+                    <p class="text-zinc-300 text-base md:text-lg mb-6 leading-relaxed">${data.desc}</p>
+                    
+                    <div class="bg-zinc-900/80 p-5 rounded-xl text-left mb-6 border border-zinc-700 space-y-3 shadow-inner">
+                        <p class="text-sm"><strong class="text-pink-400">Best For:</strong> ${data.bestFor}</p>
+                        <p class="text-sm"><strong class="text-pink-400">Typical Settings:</strong> ${data.settings}</p>
+                    </div>
+                </div>
+            `;
+            document.getElementById('progress-bar').style.width = '100%';
+            document.getElementById('restart-container').classList.remove('hidden');
         }
+
+        function updateProgress() {
+            const stepsTotal = 5;
+            const currentLevel = historyStack.length + 1;
+            const percentage = Math.min((currentLevel / stepsTotal) * 100, 100);
+            document.getElementById('progress-bar').style.width = percentage + '%';
+        }
+
+        // Initialize on load
+        startQuiz();
     </script>
 </body>
 </html>
