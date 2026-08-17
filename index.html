@@ -200,7 +200,13 @@
         function startQuiz() {
             currentStep = 'primary_goal';
             historyStack = [];
-            document.getElementById('quiz-container').style.display = 'block';
+            
+            // Restore original question container innerHTML structure
+            document.getElementById('quiz-container').innerHTML = `
+                <h2 id="question-text" class="text-xl md:text-2xl font-semibold mb-6 text-zinc-200"></h2>
+                <div id="options-container" class="space-y-4"></div>
+            `;
+            
             document.getElementById('restart-container').classList.add('hidden');
             renderQuestion();
         }
