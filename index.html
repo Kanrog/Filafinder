@@ -13,7 +13,7 @@
         <!-- Header -->
         <div class="text-center mb-10">
             <h1 class="text-3xl md:text-5xl font-extrabold text-teal-400 tracking-tight">Filafinder</h1>
-            <p class="text-zinc-400 text-base md:text-lg mt-3">Navigate structural, aesthetic, and mechanical requirements for your project.</p>
+            <p class="text-zinc-400 text-base md:text-lg mt-3">Find the right filament for your 3D printer parts based on strength, temperature, and hardware.</p>
         </div>
 
         <!-- Progress Bar -->
@@ -41,12 +41,11 @@
         const questions = [
             {
                 id: 'primary_goal',
-                question: 'What is the primary characteristic or application you need for this project?',
+                question: 'What kind of project or part are you printing?',
                 options: [
-                    { text: 'Aesthetics / Visual Display (Smooth, Matte, or Glossy/Silk finishes)', next: 'aesthetic_type' },
-                    { text: 'Flexibility, Bending, or Impact Absorption (Rubber-like or Living Hinges)', next: 'flex_type' },
-                    { text: 'General Mechanical Utility / Strong Functional Parts', next: 'environment_functional' },
-                    { text: 'Extreme Engineering: High Heat, Heavy Load, or Structural Rigidity', next: 'extreme_type' }
+                    { text: 'Aesthetics / Visual Display Models', next: 'aesthetic_type' },
+                    { text: 'Functional 3D Printer Parts & Mechanical Components', next: 'printer_part_temp' },
+                    { text: 'Flexibility, Bending, or Living Hinges', next: 'flex_type' }
                 ]
             },
             // --- AESTHETICS BRANCH ---
@@ -55,134 +54,143 @@
                 question: 'What kind of surface finish are you looking for?',
                 options: [
                     { text: 'High gloss, metallic sheen, or silky luster', result: 'SILK_PLA' },
-                    { text: 'Smooth, non-reflective, hides layer lines well', result: 'MATTE_PLA' },
-                    { text: 'Standard clean look, easy and cheap prototyping', result: 'PLA' }
+                    { text: 'Smooth, non-reflective matte texture', result: 'MATTE_PLA' },
+                    { text: 'Standard clean look', result: 'PLA' }
                 ]
             },
             // --- FLEXIBILITY BRANCH ---
             {
                 id: 'flex_type',
-                question: 'Does the part need rubber-like elasticity or fatigue-resistant bending (like a snap hinge)?',
+                question: 'What kind of flexibility do you need?',
                 options: [
-                    { text: 'Flexible / Elastic (Gaskets, phone cases, wheels, feet)', result: 'TPU' },
-                    { text: 'Semi-rigid with extreme hinge/fatigue resistance (Living hinges, chemical containers)', result: 'PP' }
+                    { text: 'Flexible & rubber-like (Gaskets, feet, phone cases)', result: 'TPU' },
+                    { text: 'Semi-rigid with extreme fatigue resistance (Living hinges)', result: 'PP' }
                 ]
             },
-            // --- GENERAL FUNCTIONAL BRANCH ---
+            // --- PRINTER PARTS BRANCH ---
             {
-                id: 'environment_functional',
-                question: 'Where will this functional part live?',
+                id: 'printer_part_temp',
+                question: 'What temperature resistance and printer setup do you have for your functional part?',
                 options: [
-                    { text: 'Indoor / Standard room environment', next: 'indoor_strength' },
-                    { text: 'Outdoor (Exposed to direct sunlight and weather)', next: 'outdoor_choice' }
-                ]
-            },
-            {
-                id: 'indoor_strength',
-                question: 'How much mechanical stress will the indoor part experience?',
-                options: [
-                    { text: 'Low stress (Brackets, light clips, desk organizers)', result: 'PETG' },
-                    { text: 'High stress / Rigidity needed -> Do you want a Fiber-Reinforced (CF/GF) material?', next: 'hardware_check_cf' }
+                    { text: 'Low temperature resistance is fine (Easy printing, high structural rigidity)', next: 'pla_or_cf' },
+                    { text: 'Medium temperature resistance (Easy printing, good toughness)', next: 'petg_or_cf' },
+                    { text: 'High temperature resistance (Requires an enclosed printer)', next: 'abs_asa_branch' }
                 ]
             },
             {
-                id: 'outdoor_choice',
-                question: 'Does the outdoor part require high impact strength or structural load handling?',
+                id: 'pla_or_cf',
+                question: 'Do you want maximum strength/rigidity with a fiber-reinforced version (requires hardened nozzle)?',
                 options: [
-                    { text: 'Standard outdoor utility (Weatherproof housing, plant pots, clips)', result: 'ASA' },
-                    { text: 'Heavy-duty structural outdoor part -> Consider fiber-reinforced ASA or PC', next: 'extreme_type' }
-                ]
-            },
-            // --- EXTREME ENGINEERING BRANCH ---
-            {
-                id: 'extreme_type',
-                question: 'What is the primary engineering challenge for this part?',
-                options: [
-                    { text: 'Extreme heat resistance & heavy industrial load (Under-hood, high torque gears)', next: 'hardware_check_pc' },
-                    { text: 'Maximum stiffness, zero flex, lightweight structural rigidity', next: 'hardware_check_cf' }
-                ]
-            },
-            // --- HARDWARE GATES ---
-            {
-                id: 'hardware_check_cf',
-                question: 'Do you have a hardened steel nozzle and an abrasive-safe setup?',
-                options: [
-                    { text: 'Yes (Hardened nozzle ready for Carbon/Glass Fiber)', result: 'CF_GF_FILAMENT' },
-                    { text: 'No (Using a standard brass nozzle)', next: 'fallback_standard_engineering' }
+                    { text: 'Yes, give me CF/GF-reinforced PLA (Hardened nozzle ready)', result: 'CF_PLA' },
+                    { text: 'No, standard easy-to-print PLA is fine (Standard brass nozzle)', result: 'PLA' }
                 ]
             },
             {
-                id: 'hardware_check_pc',
-                question: 'Is your printer fully enclosed capable of handling high ambient temps (>95°C bed, high hotend temp)?',
+                id: 'petg_or_cf',
+                question: 'Do you want enhanced rigidity with a carbon/glass fiber reinforced PETG (requires hardened nozzle)?',
                 options: [
-                    { text: 'Yes, heavy-duty enclosed printer.', result: 'PC' },
-                    { text: 'No, standard or open enclosure printer.', result: 'ASA' }
+                    { text: 'Yes, CF-PETG for extra stiffness and toughness', result: 'CF_PETG' },
+                    { text: 'No, standard easy-to-print PETG is fine', result: 'PETG' }
                 ]
             },
             {
-                id: 'fallback_standard_engineering',
-                question: 'Since you have a standard nozzle, do you have an enclosure for printing high-temp engineering plastics?',
+                id: 'abs_asa_branch',
+                question: 'What are your specific environmental and hardware requirements for high-temp parts?',
                 options: [
-                    { text: 'Yes, enclosed printer.', result: 'ASA' },
-                    { text: 'No enclosure (Open printer).', result: 'PETG' }
+                    { text: 'Standard high-temp mechanical part (Enclosed printer required)', next: 'abs_asa_choice' },
+                    { text: 'Extreme industrial load or max stiffness with fiber reinforcement (Hardened nozzle + Enclosure)', result: 'CF_ASA_PC' }
+                ]
+            },
+            {
+                id: 'abs_asa_choice',
+                question: 'Will the part be used indoors or outdoors under UV exposure?',
+                options: [
+                    { text: 'Indoor mechanical / general high-temp part (ABS)', result: 'ABS' },
+                    { text: 'Outdoor part exposed to sunlight and weather (ASA)', result: 'ASA' }
+                ]
+            },
+            {
+                id: 'CF_ASA_PC',
+                question: 'Choose your high-end engineering material:',
+                options: [
+                    { text: 'CF-ASA (Enclosure + Hardened nozzle for outdoor high-strength parts)', result: 'CF_ASA' },
+                    { text: 'Polycarbonate / PC (Extreme heat & industrial load, fully enclosed)', result: 'PC' }
                 ]
             }
         ];
 
         const filamentData = {
             'PLA': {
-                title: 'Standard PLA',
-                desc: 'The gold standard for ease of printing, sharp details, and low warp. Perfect for general prototypes and indoor visual models.',
-                bestFor: 'Miniatures, non-load-bearing parts, desk accessories.',
+                title: 'PLA (Standard)',
+                desc: 'The easiest filament to print with excellent dimensional accuracy and high initial strength/rigidity, but low temperature resistance (softens around 50–60°C).',
+                bestFor: 'Dry indoor printer parts, brackets, easy prototypes.',
                 settings: 'Nozzle: 190–210°C | Bed: 50–60°C | Enclosure: Not needed'
+            },
+            'CF_PLA': {
+                title: 'CF-Reinforced PLA',
+                desc: 'Standard PLA infused with carbon fiber for increased structural rigidity, reduced warping, and a gorgeous matte textured finish. Requires a hardened nozzle.',
+                bestFor: 'Stiff mechanical brackets, non-heated internal printer parts.',
+                settings: 'Nozzle: 200–220°C (Hardened) | Bed: 50–60°C | Enclosure: Not needed'
             },
             'SILK_PLA': {
                 title: 'Silk PLA',
-                desc: 'Blended with additives to yield a high-gloss, reflective, shiny finish that brilliantly masks layer lines. Slightly lower layer adhesion than standard PLA.',
-                bestFor: 'Vases, display art, cosmetic models, statues.',
+                desc: 'Blended with additives to yield a high-gloss, reflective, shiny finish that brilliantly masks layer lines.',
+                bestFor: 'Display art, cosmetic models, statues.',
                 settings: 'Nozzle: 200–220°C | Bed: 50–60°C | Enclosure: Not needed'
             },
             'MATTE_PLA': {
                 title: 'Matte PLA',
-                desc: 'Formulated with foaming agents or specialized fillers to eliminate plastic shine, resulting in a smooth, flat stone or paper-like texture.',
-                bestFor: 'Architectural models, modern displays, stealth-look items.',
+                desc: 'Formulated to eliminate plastic shine, resulting in a smooth, flat stone or paper-like texture.',
+                bestFor: 'Architectural models, modern aesthetic displays.',
                 settings: 'Nozzle: 200–215°C | Bed: 50–60°C | Enclosure: Not needed'
-            },
-            'TPU': {
-                title: 'TPU (Thermoplastic Polyurethane)',
-                desc: 'A flexible, highly elastic elastomer with exceptional impact absorption, tear resistance, and wear tolerance.',
-                bestFor: 'Phone cases, RC car tires, dampening feet, wearable items.',
-                settings: 'Nozzle: 210–230°C | Bed: 30–60°C | Print Slow (20-30 mm/s)'
-            },
-            'PP': {
-                title: 'PP (Polypropylene)',
-                desc: 'Ultra-lightweight, chemically resistant, and offers incredible fatigue resistance, making it uniquely suited for parts that bend repeatedly.',
-                bestFor: 'Living hinges, snap-fit functional containers, chemical vials.',
-                settings: 'Nozzle: 220–250°C | Bed: 85–100°C (Requires specialized adhesive/tape)'
             },
             'PETG': {
                 title: 'PETG',
-                desc: 'A tough, dependable workhorse offering good layer adhesion, mild chemical resistance, and better temperature limits than PLA.',
-                bestFor: 'Mechanical brackets, general functional prints, water-resistant containers.',
+                desc: 'A tough, dependable workhorse offering easy printing, medium temperature resistance, and great layer adhesion.',
+                bestFor: 'General mechanical parts, functional clips, water-resistant utility.',
                 settings: 'Nozzle: 230–250°C | Bed: 70–80°C | Enclosure: Not needed'
             },
+            'CF_PETG': {
+                title: 'CF-Reinforced PETG',
+                desc: 'PETG infused with carbon fiber for higher rigidity and a matte finish while maintaining PETG toughness. Requires a hardened nozzle.',
+                bestFor: 'Stiff structural brackets, high-performance functional prints.',
+                settings: 'Nozzle: 240–260°C (Hardened) | Bed: 70–85°C | Enclosure: Not needed'
+            },
+            'ABS': {
+                title: 'ABS',
+                desc: 'Provides high impact resistance and elevated temperature resistance, but strictly requires a heated, enclosed printer and proper ventilation.',
+                bestFor: 'Indoor functional engineering parts, high-heat items.',
+                settings: 'Nozzle: 240–260°C | Bed: 90–110°C | Enclosure: Required'
+            },
             'ASA': {
-                title: 'ASA (Acrylonitrile Styrene Acrylate)',
-                desc: 'The definitive choice for outdoor endurance. Mechanically similar to ABS, but features robust structural UV stabilization that prevents weather yellowing.',
-                bestFor: 'Automotive exterior parts, drone frames, exterior electronics housings.',
+                title: 'ASA',
+                desc: 'Mechanically similar to ABS with high temperature resistance, but adds superior UV and weather resistance for outdoor use. Requires an enclosure.',
+                bestFor: 'Outdoor printer parts, automotive trim, weather-exposed housings.',
                 settings: 'Nozzle: 240–260°C | Bed: 90–100°C | Enclosure: Required'
+            },
+            'CF_ASA': {
+                title: 'CF-Reinforced ASA',
+                desc: 'Combines the ultimate outdoor UV stability of ASA with chopped carbon fiber for extreme rigidity. Requires an enclosure and hardened nozzle.',
+                bestFor: 'High-stress outdoor drone frames, structural mechanical enclosures.',
+                settings: 'Nozzle: 250–270°C (Hardened) | Bed: 95–110°C | Enclosure: Required'
             },
             'PC': {
                 title: 'PC (Polycarbonate)',
-                desc: 'An extreme engineering thermoplastic boasting massive impact strength, high rigidity, and thermal stability up to roughly 110–140°C.',
-                bestFor: 'Heavy-load industrial components, high-heat enclosures, structural clamps.',
+                desc: 'An extreme engineering thermoplastic boasting massive impact strength, high rigidity, and thermal stability up to 110–140°C.',
+                bestFor: 'Heavy-load industrial components, high-heat enclosures.',
                 settings: 'Nozzle: 260–310°C | Bed: 110–135°C | Enclosure: Fully Enclosed & Vented'
             },
-            'CF_GF_FILAMENT': {
-                title: 'Carbon/Glass Fiber Reinforced Filament (CF/GF-PLA, CF-PETG, or CF-ASA/PA)',
-                desc: 'Imbuing base polymers with chopped fibers drastically increases stiffness, dimensional stability, and eliminates warping while leaving a matte, textured finish.',
-                bestFor: 'High-rigidity drone frames, stiff mechanical mounts, industrial jigs and fixtures.',
-                settings: 'Nozzle: Matches base polymer (Hardened Steel Required) | Bed: Varies by base'
+            'TPU': {
+                title: 'TPU',
+                desc: 'A flexible, highly elastic elastomer with exceptional impact absorption and tear resistance.',
+                bestFor: 'Dampening feet, flexible joints, protective cases.',
+                settings: 'Nozzle: 210–230°C | Bed: 30–60°C | Print Slow'
+            },
+            'PP': {
+                title: 'PP (Polypropylene)',
+                desc: 'Ultra-lightweight with incredible fatigue resistance, perfect for parts that bend repeatedly.',
+                bestFor: 'Living hinges, snap-fit functional containers.',
+                settings: 'Nozzle: 220–250°C | Bed: 85–100°C (Special tape required)'
             }
         };
 
@@ -227,7 +235,7 @@
         function renderResult(filamentKey) {
             const data = filamentData[filamentKey] || {
                 title: filamentKey,
-                desc: 'Recommended material based on your custom configuration criteria.',
+                desc: 'Recommended material based on your configuration.',
                 bestFor: 'Targeted application use',
                 settings: 'Check roll specifications'
             };
