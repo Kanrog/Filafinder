@@ -6,24 +6,81 @@
     <title>Filafinder - What 3D Printer Filament Do You Need?</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" href="filafinder-icon.ico" type="image/x-icon">
-</head>
-<body class="bg-zinc-900 text-zinc-100 min-h-screen flex flex-col items-center justify-center p-6 md:p-10">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Inter:wght@400;500;700&display=swap');
 
-    <div class="max-w-2xl w-full bg-zinc-800/90 rounded-2xl shadow-2xl p-8 md:p-12 border border-zinc-700 backdrop-blur-md">
-        <!-- Header -->
-        <div class="text-center mb-10">
-            <h1 class="text-3xl md:text-5xl font-extrabold text-teal-400 tracking-tight">Filafinder</h1>
-            <p class="text-zinc-400 text-base md:text-lg mt-3">Find the right filament for your 3D printer parts based on strength, temperature, and hardware.</p>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d0614;
+            background-image: 
+                radial-gradient(circle at 50% 20%, rgba(217, 70, 239, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 20% 80%, rgba(20, 184, 166, 0.1) 0%, transparent 40%);
+        }
+
+        h1, h2, .neon-title {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* 80s Synthwave Neon Glow Effects */
+        .neon-box {
+            background: rgba(18, 12, 32, 0.85);
+            border: 2px solid #2dd4bf;
+            box-shadow: 0 0 20px rgba(45, 212, 191, 0.25), inset 0 0 15px rgba(217, 70, 239, 0.1);
+        }
+
+        .neon-text-teal {
+            color: #2dd4bf;
+            text-shadow: 0 0 10px rgba(45, 212, 191, 0.6), 0 0 20px rgba(45, 212, 191, 0.3);
+        }
+
+        .neon-text-pink {
+            color: #f472b6;
+            text-shadow: 0 0 10px rgba(244, 114, 182, 0.6), 0 0 20px rgba(244, 114, 182, 0.3);
+        }
+
+        .neon-button {
+            background: linear-gradient(135deg, #181124 0%, #221738 100%);
+            border: 1.5px solid #d946ef;
+            box-shadow: 0 0 10px rgba(217, 70, 239, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .neon-button:hover {
+            background: #d946ef;
+            color: #0d0614;
+            box-shadow: 0 0 25px rgba(217, 70, 239, 0.8), 0 0 50px rgba(217, 70, 239, 0.4);
+            border-color: #f472b6;
+        }
+
+        .neon-progress {
+            box-shadow: 0 0 12px #f472b6;
+        }
+    </style>
+</head>
+<body class="text-zinc-100 min-h-screen flex flex-col items-center justify-center p-6 md:p-10">
+
+    <div class="max-w-2xl w-full neon-box rounded-2xl p-8 md:p-12 backdrop-blur-md relative">
+        
+        <!-- Top Action Bar (Compare Modal Trigger) -->
+        <div class="flex justify-between items-center mb-6 border-b border-zinc-700/60 pb-4">
+            <div>
+                <h1 class="text-2xl md:text-4xl font-extrabold neon-text-teal tracking-wider uppercase">Filafinder</h1>
+                <p class="text-zinc-400 text-xs md:text-sm mt-1">Smart 3D Printer Filament Selector & Advisor</p>
+            </div>
+            <button onclick="toggleCompareModal(true)" class="bg-zinc-900 hover:bg-teal-500 hover:text-zinc-950 text-teal-300 px-4 py-2 rounded-xl text-xs font-semibold transition-all border border-teal-500/50 flex items-center space-x-1.5 shadow-[0_0_10px_rgba(45,212,191,0.2)]">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                <span>Compare Matrix</span>
+            </button>
         </div>
 
         <!-- Progress Bar -->
-        <div class="w-full bg-zinc-700 h-3 rounded-full mb-8 overflow-hidden">
-            <div id="progress-bar" class="bg-pink-500 h-full transition-all duration-300" style="width: 20%;"></div>
+        <div id="progress-wrapper" class="w-full bg-zinc-900 h-3 rounded-full mb-8 overflow-hidden border border-zinc-700">
+            <div id="progress-bar" class="bg-pink-500 h-full transition-all duration-300 neon-progress" style="width: 20%;"></div>
         </div>
 
         <!-- Question Container -->
         <div id="quiz-container">
-            <h2 id="question-text" class="text-xl md:text-2xl font-semibold mb-6 text-zinc-200"></h2>
+            <h2 id="question-text" class="text-xl md:text-2xl font-semibold mb-6 text-zinc-100 tracking-wide"></h2>
             <div id="options-container" class="space-y-4">
                 <!-- Dynamically injected options -->
             </div>
@@ -31,9 +88,42 @@
 
         <!-- Restart Button (Hidden initially) -->
         <div id="restart-container" class="hidden text-center mt-8">
-            <button onclick="startQuiz()" class="bg-pink-600 hover:bg-pink-500 text-white font-bold text-lg px-8 py-3 rounded-xl transition-colors shadow-lg hover:shadow-pink-500/25">
+            <button onclick="startQuiz()" class="bg-pink-600 hover:bg-pink-500 text-white font-bold text-lg px-8 py-3 rounded-xl transition-colors shadow-[0_0_20px_rgba(244,114,182,0.5)] hover:shadow-[0_0_35px_rgba(244,114,182,0.8)] border border-pink-400">
                 Start Over
             </button>
+        </div>
+    </div>
+
+    <!-- Compare Materials Drawer / Modal -->
+    <div id="compare-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
+        <div class="neon-box max-w-3xl w-full max-h-[90vh] overflow-y-auto rounded-2xl p-6 md:p-8 relative">
+            <div class="flex justify-between items-center mb-6 border-b border-zinc-700 pb-4">
+                <h2 class="text-xl md:text-2xl font-bold neon-text-teal tracking-wide">Material Comparison Matrix</h2>
+                <button onclick="toggleCompareModal(false)" class="text-pink-400 hover:text-white text-xl font-bold px-3 py-1 bg-zinc-900 rounded-lg border border-pink-500/50">&times;</button>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs md:text-sm">
+                    <thead>
+                        <tr class="border-b border-zinc-700 text-teal-300 font-semibold">
+                            <th class="p-3">Material</th>
+                            <th class="p-3">Ease of Print</th>
+                            <th class="p-3">Strength / Rigidity</th>
+                            <th class="p-3">Max Temp</th>
+                            <th class="p-3">UV Resistance</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-zinc-700/40 text-zinc-300">
+                        <tr><td class="p-3 font-semibold text-white">PLA</td><td class="p-3 text-teal-400">Very Easy</td><td class="p-3">Medium-High (Brittle)</td><td class="p-3">Low (55°C)</td><td class="p-3 text-pink-400">Poor</td></tr>
+                        <tr><td class="p-3 font-semibold text-white">CF-PLA</td><td class="p-3 text-teal-400">Easy*</td><td class="p-3 text-teal-300">High Stiffness</td><td class="p-3">Low (60°C)</td><td class="p-3 text-pink-400">Poor</td></tr>
+                        <tr><td class="p-3 font-semibold text-white">PETG</td><td class="p-3 text-teal-400">Easy</td><td class="p-3">High (Tough)</td><td class="p-3">Medium (75°C)</td><td class="p-3 text-yellow-300">Moderate</td></tr>
+                        <tr><td class="p-3 font-semibold text-white">ABS / ASA</td><td class="p-3 text-yellow-300">Hard (Enclosed)</td><td class="p-3">High (Impact Resistant)</td><td class="p-3 text-teal-300">High (95°C+)</td><td class="p-3 text-teal-400">Excellent (ASA)</td></tr>
+                        <tr><td class="p-3 font-semibold text-white">TPU</td><td class="p-3 text-yellow-300">Moderate (Slow)</td><td class="p-3">Flexible / Elastic</td><td class="p-3">Low-Medium</td><td class="p-3 text-yellow-300">Moderate</td></tr>
+                        <tr><td class="p-3 font-semibold text-white">PC</td><td class="p-3 text-pink-400">Very Hard</td><td class="p-3 text-teal-300">Extreme</td><td class="p-3 text-teal-300">Very High (115°C+)</td><td class="p-3 text-teal-400">Good</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-zinc-500 text-xs mt-4">*CF variants require a hardened steel nozzle.</p>
         </div>
     </div>
 
@@ -124,73 +214,109 @@
                 title: 'PLA (Standard)',
                 desc: 'The easiest filament to print with excellent dimensional accuracy and high initial strength/rigidity, but low temperature resistance (softens around 50–60°C).',
                 bestFor: 'Dry indoor printer parts, brackets, easy prototypes.',
-                settings: 'Nozzle: 190–210°C | Bed: 50–60°C | Enclosure: Not needed'
+                settings: 'Nozzle: 190–210°C | Bed: 50–60°C | Enclosure: Not needed',
+                adhesion: 'PEI Sheet (Clean with isopropyl alcohol). No glue required.',
+                drying: 'Low moisture risk. Dry only if bubbling occurs (45°C for 4 hours).',
+                slicing: '3+ walls, 25%+ infill (Gyroid or Grid).'
             },
             'CF_PLA': {
                 title: 'CF-Reinforced PLA',
-                desc: 'Standard PLA infused with carbon fiber for increased structural rigidity, reduced warping, and a gorgeous matte textured finish. Requires a hardened nozzle.',
+                desc: 'Standard PLA infused with carbon fiber for increased structural rigidity, reduced warping, and a gorgeous matte textured finish.',
                 bestFor: 'Stiff mechanical brackets, non-heated internal printer parts.',
-                settings: 'Nozzle: 200–220°C (Hardened) | Bed: 50–60°C | Enclosure: Not needed'
+                settings: 'Nozzle: 200–220°C (Hardened Steel) | Bed: 50–60°C | Enclosure: Not needed',
+                adhesion: 'PEI Sheet or textured plate. Great natural release.',
+                drying: 'Keep dry in a sealed box with desiccant (45°C for 4 hours if humid).',
+                slicing: '4+ walls for structural rigidity, 35%+ infill.'
             },
             'SILK_PLA': {
                 title: 'Silk PLA',
                 desc: 'Blended with additives to yield a high-gloss, reflective, shiny finish that brilliantly masks layer lines.',
                 bestFor: 'Display art, cosmetic models, statues.',
-                settings: 'Nozzle: 200–220°C | Bed: 50–60°C | Enclosure: Not needed'
+                settings: 'Nozzle: 200–220°C | Bed: 50–60°C | Enclosure: Not needed',
+                adhesion: 'Standard PEI plate.',
+                drying: 'Sensitive to moisture over time; dry at 45°C if stringing occurs.',
+                slicing: '2-3 walls, 15-20% infill.'
             },
             'MATTE_PLA': {
                 title: 'Matte PLA',
                 desc: 'Formulated to eliminate plastic shine, resulting in a smooth, flat stone or paper-like texture.',
                 bestFor: 'Architectural models, modern aesthetic displays.',
-                settings: 'Nozzle: 200–215°C | Bed: 50–60°C | Enclosure: Not needed'
+                settings: 'Nozzle: 200–215°C | Bed: 50–60°C | Enclosure: Not needed',
+                adhesion: 'Standard PEI plate.',
+                drying: 'Dry at 45°C for 4 hours if brittle.',
+                slicing: '3 walls for clean matte outer shells.'
             },
             'PETG': {
                 title: 'PETG',
                 desc: 'A tough, dependable workhorse offering easy printing, medium temperature resistance, and great layer adhesion.',
                 bestFor: 'General mechanical parts, functional clips, water-resistant utility.',
-                settings: 'Nozzle: 230–250°C | Bed: 70–80°C | Enclosure: Not needed'
+                settings: 'Nozzle: 230–250°C | Bed: 70–80°C | Enclosure: Not needed',
+                adhesion: 'PEI Sheet with a light glue stick layer (acts as a release agent to prevent glass bed pulling/tearing).',
+                drying: 'Moderately hygroscopic. Dry at 65°C for 4 hours if stringy.',
+                slicing: '3-4 walls, 30%+ infill for functional load parts.'
             },
             'CF_PETG': {
                 title: 'CF-Reinforced PETG',
-                desc: 'PETG infused with carbon fiber for higher rigidity and a matte finish while maintaining PETG toughness. Requires a hardened nozzle.',
+                desc: 'PETG infused with carbon fiber for higher rigidity and a matte finish while maintaining PETG toughness.',
                 bestFor: 'Stiff structural brackets, high-performance functional prints.',
-                settings: 'Nozzle: 240–260°C (Hardened) | Bed: 70–85°C | Enclosure: Not needed'
+                settings: 'Nozzle: 240–260°C (Hardened Steel) | Bed: 70–85°C | Enclosure: Not needed',
+                adhesion: 'Textured PEI plate works best.',
+                drying: 'Dry at 65°C for 4 hours in a desiccated box.',
+                slicing: '4 walls, 40% infill for maximum mechanical leverage.'
             },
             'ABS': {
                 title: 'ABS',
                 desc: 'Provides high impact resistance and elevated temperature resistance, but strictly requires a heated, enclosed printer and proper ventilation.',
                 bestFor: 'Indoor functional engineering parts, high-heat items.',
-                settings: 'Nozzle: 240–260°C | Bed: 90–110°C | Enclosure: Required'
+                settings: 'Nozzle: 240–260°C | Bed: 90–110°C | Enclosure: Required',
+                adhesion: 'PEI plate with ABS juice or glue stick slurry.',
+                drying: 'Dry at 70°C for 4 hours.',
+                slicing: '4+ walls, 40%+ infill. High perimeters add massive strength.'
             },
             'ASA': {
                 title: 'ASA',
-                desc: 'Mechanically similar to ABS with high temperature resistance, but adds superior UV and weather resistance for outdoor use. Requires an enclosure.',
+                desc: 'Mechanically similar to ABS with high temperature resistance, but adds superior UV and weather resistance for outdoor use.',
                 bestFor: 'Outdoor printer parts, automotive trim, weather-exposed housings.',
-                settings: 'Nozzle: 240–260°C | Bed: 90–100°C | Enclosure: Required'
+                settings: 'Nozzle: 240–260°C | Bed: 90–100°C | Enclosure: Required',
+                adhesion: 'Textured PEI sheet with brim for large parts to prevent corner lifting.',
+                drying: 'Dry at 70°C for 4 hours.',
+                slicing: '4 walls, 35% gyroid infill.'
             },
             'CF_ASA': {
                 title: 'CF-Reinforced ASA',
-                desc: 'Combines the ultimate outdoor UV stability of ASA with chopped carbon fiber for extreme rigidity. Requires an enclosure and hardened nozzle.',
+                desc: 'Combines the ultimate outdoor UV stability of ASA with chopped carbon fiber for extreme rigidity.',
                 bestFor: 'High-stress outdoor drone frames, structural mechanical enclosures.',
-                settings: 'Nozzle: 250–270°C (Hardened) | Bed: 95–110°C | Enclosure: Required'
+                settings: 'Nozzle: 250–270°C (Hardened Steel) | Bed: 95–110°C | Enclosure: Required',
+                adhesion: 'Textured PEI plate with active chamber heat.',
+                drying: 'Dry thoroughly at 70°C for 6 hours.',
+                slicing: '4+ walls, 45% infill.'
             },
             'PC': {
                 title: 'PC (Polycarbonate)',
                 desc: 'An extreme engineering thermoplastic boasting massive impact strength, high rigidity, and thermal stability up to 110–140°C.',
                 bestFor: 'Heavy-load industrial components, high-heat enclosures.',
-                settings: 'Nozzle: 260–310°C | Bed: 110–135°C | Enclosure: Fully Enclosed & Vented'
+                settings: 'Nozzle: 260–310°C | Bed: 110–135°C | Enclosure: Fully Enclosed & Vented',
+                adhesion: 'Magellan glue or specialized engineering plate adhesive.',
+                drying: 'Highly hygroscopic! Must be actively dried at 80°C for 6-8 hours.',
+                slicing: '5 walls, 50%+ infill for extreme engineering stress.'
             },
             'TPU': {
                 title: 'TPU',
                 desc: 'A flexible, highly elastic elastomer with exceptional impact absorption and tear resistance.',
                 bestFor: 'Dampening feet, flexible joints, protective cases.',
-                settings: 'Nozzle: 210–230°C | Bed: 30–60°C | Print Slow'
+                settings: 'Nozzle: 210–230°C | Bed: 30–60°C | Print Slow (20-30 mm/s)',
+                adhesion: 'PEI sheet or painter’s tape (TPU can bond too aggressively to clean glass).',
+                drying: 'Extremely hygroscopic. Dry at 50°C for 6 hours before printing.',
+                slicing: '3-4 perimeters, low infill (10-20%) for softness or higher infill for firmness.'
             },
             'PP': {
                 title: 'PP (Polypropylene)',
                 desc: 'Ultra-lightweight with incredible fatigue resistance, perfect for parts that bend repeatedly.',
                 bestFor: 'Living hinges, snap-fit functional containers.',
-                settings: 'Nozzle: 220–250°C | Bed: 85–100°C (Special tape required)'
+                settings: 'Nozzle: 220–250°C | Bed: 85–100°C',
+                adhesion: 'Extremely difficult to stick. Requires genuine PP packaging tape or specialized adhesion sheets on the bed.',
+                drying: 'Keep dry at 60°C for 4 hours.',
+                slicing: '3-4 walls with slow print speeds.'
             }
         };
 
@@ -201,12 +327,12 @@
             currentStep = 'primary_goal';
             historyStack = [];
             
-            // Restore original question container innerHTML structure
             document.getElementById('quiz-container').innerHTML = `
-                <h2 id="question-text" class="text-xl md:text-2xl font-semibold mb-6 text-zinc-200"></h2>
+                <h2 id="question-text" class="text-xl md:text-2xl font-semibold mb-6 text-zinc-100 tracking-wide"></h2>
                 <div id="options-container" class="space-y-4"></div>
             `;
             
+            document.getElementById('progress-wrapper').style.display = 'block';
             document.getElementById('restart-container').classList.add('hidden');
             renderQuestion();
         }
@@ -220,7 +346,7 @@
 
             questionObj.options.forEach(opt => {
                 const button = document.createElement('button');
-                button.className = 'w-full text-left bg-zinc-700/80 hover:bg-teal-600 hover:text-white p-5 rounded-xl transition-all duration-200 border border-zinc-600 font-medium text-base md:text-lg shadow-md';
+                button.className = 'w-full text-left neon-button text-zinc-200 p-5 rounded-xl font-medium text-base md:text-lg';
                 button.innerText = opt.text;
                 
                 button.onclick = () => {
@@ -243,22 +369,28 @@
                 title: filamentKey,
                 desc: 'Recommended material based on your configuration.',
                 bestFor: 'Targeted application use',
-                settings: 'Check roll specifications'
+                settings: 'Check roll specifications',
+                adhesion: 'Standard practices',
+                drying: 'Standard storage',
+                slicing: 'Standard profiles'
             };
 
             document.getElementById('quiz-container').innerHTML = `
                 <div class="text-center py-2">
-                    <span class="text-xs uppercase tracking-wider bg-teal-950 text-teal-300 border border-teal-800 px-4 py-1.5 rounded-full font-bold">Optimal Choice</span>
-                    <h2 class="text-3xl font-extrabold text-teal-400 mt-4 mb-3">${data.title}</h2>
+                    <span class="text-xs uppercase tracking-wider bg-teal-950 text-teal-300 border border-teal-500/50 px-4 py-1.5 rounded-full font-bold shadow-[0_0_10px_rgba(45,212,191,0.3)]">Optimal Choice</span>
+                    <h2 class="text-3xl font-extrabold neon-text-teal mt-4 mb-3">${data.title}</h2>
                     <p class="text-zinc-300 text-base md:text-lg mb-6 leading-relaxed">${data.desc}</p>
                     
-                    <div class="bg-zinc-900/80 p-5 rounded-xl text-left mb-6 border border-zinc-700 space-y-3 shadow-inner">
-                        <p class="text-sm"><strong class="text-pink-400">Best For:</strong> ${data.bestFor}</p>
-                        <p class="text-sm"><strong class="text-pink-400">Typical Settings:</strong> ${data.settings}</p>
+                    <div class="bg-zinc-950/80 p-5 rounded-xl text-left mb-6 border border-teal-500/30 space-y-3 shadow-[inset_0_0_15px_rgba(45,212,191,0.05)]">
+                        <p class="text-sm"><strong class="neon-text-pink">Best For:</strong> ${data.bestFor}</p>
+                        <p class="text-sm"><strong class="neon-text-pink">Typical Settings:</strong> ${data.settings}</p>
+                        <p class="text-sm"><strong class="neon-text-pink">Bed Adhesion:</strong> ${data.adhesion}</p>
+                        <p class="text-sm"><strong class="neon-text-pink">Drying & Storage:</strong> ${data.drying}</p>
+                        <p class="text-sm"><strong class="neon-text-pink">Slicing Pro-Tip:</strong> ${data.slicing}</p>
                     </div>
                 </div>
             `;
-            document.getElementById('progress-bar').style.width = '100%';
+            document.getElementById('progress-wrapper').style.display = 'none';
             document.getElementById('restart-container').classList.remove('hidden');
         }
 
@@ -267,6 +399,15 @@
             const currentLevel = historyStack.length + 1;
             const percentage = Math.min((currentLevel / stepsTotal) * 100, 100);
             document.getElementById('progress-bar').style.width = percentage + '%';
+        }
+
+        function toggleCompareModal(show) {
+            const modal = document.getElementById('compare-modal');
+            if (show) {
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
         }
 
         // Initialize on load
