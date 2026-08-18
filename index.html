@@ -168,15 +168,15 @@
             },
             {
                 id: 'mmu_check_indoor',
-                question: 'Are you using a multi-material system (like an AMS or MMU) or looking for alternate support material options?',
+                question: 'Are you using a multi-material system or looking for alternate support interface options (like PVA or cross-material release layers) to improve surface quality?',
                 options: [
-                    { text: 'Yes, using a multi-material setup / Need support interface advice', next: 'printer_part_temp_indoor_mmu' },
+                    { text: 'Yes, using a multi-material setup / Want support interface advice', next: 'printer_part_temp_indoor_mmu' },
                     { text: 'No, standard single-material print setup', next: 'printer_part_temp_indoor' }
                 ]
             },
             {
                 id: 'mmu_check_outdoor',
-                question: 'Are you using a multi-material system (like an AMS or MMU) for your outdoor part?',
+                question: 'Are you using a multi-material system for your outdoor part?',
                 options: [
                     { text: 'Yes, multi-material outdoor setup', next: 'outdoor_material_choice_mmu' },
                     { text: 'No, standard single-material print setup', next: 'outdoor_material_choice' }
@@ -186,64 +186,82 @@
                 id: 'printer_part_temp_indoor_mmu',
                 question: 'What temperature resistance and mechanical stress requirements do you have?',
                 options: [
-                    { text: 'Low/Medium temperature, general brackets & clips', next: 'pla_or_petg_tier_mmu' },
-                    { text: 'Extreme mechanical load, wear-resistance, or high heat (>90°C)', next: 'extreme_engineering_choice_mmu' }
+                    { text: 'Low temperature resistance (Easy printing, high structural rigidity)', next: 'pla_or_cf_mmu' },
+                    { text: 'Medium temperature resistance (Easy printing, good toughness)', next: 'petg_or_cf_mmu' },
+                    { text: 'High temperature resistance (Requires enclosed printer)', next: 'extreme_engineering_choice_mmu' }
                 ]
             },
             {
                 id: 'printer_part_temp_indoor',
                 question: 'What temperature resistance and mechanical stress requirements do you have?',
                 options: [
-                    { text: 'Low/Medium temperature, general brackets & clips', next: 'pla_or_petg_tier' },
-                    { text: 'Extreme mechanical load, wear-resistance, or high heat (>90°C)', next: 'extreme_engineering_choice' }
+                    { text: 'Low temperature resistance (Easy printing, high structural rigidity)', next: 'pla_or_cf' },
+                    { text: 'Medium temperature resistance (Easy printing, good toughness)', next: 'petg_or_cf' },
+                    { text: 'High temperature resistance (Requires enclosed printer)', next: 'extreme_engineering_choice' }
                 ]
             },
             {
-                id: 'pla_or_petg_tier_mmu',
-                question: 'Choose your preferred balance of ease and toughness:',
+                id: 'pla_or_cf_mmu',
+                question: 'Do you want maximum strength/rigidity with a fiber-reinforced version (requires hardened nozzle)?',
                 options: [
-                    { text: 'Easy printing, high initial rigidity (PLA / CF-PLA)', result: 'PLA_MMU' },
-                    { text: 'Tough, chemical-resistant workhorse (PETG / CF-PETG)', result: 'PETG_MMU' }
+                    { text: 'Yes, give me CF-reinforced PLA', result: 'CF_PLA_MMU' },
+                    { text: 'No, standard easy-to-print PLA', result: 'PLA_MMU' }
                 ]
             },
             {
-                id: 'pla_or_petg_tier',
-                question: 'Choose your preferred balance of ease and toughness:',
+                id: 'pla_or_cf',
+                question: 'Do you want maximum strength/rigidity with a fiber-reinforced version (requires hardened nozzle)?',
                 options: [
-                    { text: 'Easy printing, high initial rigidity (PLA / CF-PLA)', result: 'PLA' },
-                    { text: 'Tough, chemical-resistant workhorse (PETG / CF-PETG)', result: 'PETG' }
+                    { text: 'Yes, give me CF-reinforced PLA', result: 'CF_PLA' },
+                    { text: 'No, standard easy-to-print PLA', result: 'PLA' }
+                ]
+            },
+            {
+                id: 'petg_or_cf_mmu',
+                question: 'Do you want enhanced rigidity with a carbon/glass fiber reinforced PETG (requires hardened nozzle)?',
+                options: [
+                    { text: 'Yes, CF-PETG for extra stiffness and toughness', result: 'CF_PETG_MMU' },
+                    { text: 'No, standard easy-to-print PETG', result: 'PETG_MMU' }
+                ]
+            },
+            {
+                id: 'petg_or_cf',
+                question: 'Do you want enhanced rigidity with a carbon/glass fiber reinforced PETG (requires hardened nozzle)?',
+                options: [
+                    { text: 'Yes, CF-PETG for extra stiffness and toughness', result: 'CF_PETG' },
+                    { text: 'No, standard easy-to-print PETG', result: 'PETG' }
                 ]
             },
             {
                 id: 'extreme_engineering_choice_mmu',
-                question: 'Do you require extreme friction reduction, gear durability, or heavy structural loading?',
+                question: 'Choose your high-temp tier:',
                 options: [
-                    { text: 'Extreme wear resistance & self-lubricating toughness (Nylon / PA-CF)', result: 'NYLON_MMU' },
-                    { text: 'High heat & impact structural enclosures (ABS / ASA / PC)', result: 'ABS_ASA_PC_CHOICE_MMU' }
+                    { text: 'Standard high-heat engineering (ABS)', result: 'ABS_MMU' },
+                    { text: 'Extreme wear-resistance or heavy structural load (Nylon / PC)', result: 'NYLON_PC_CHOICE_MMU' }
                 ]
             },
             {
                 id: 'extreme_engineering_choice',
-                question: 'Do you require extreme friction reduction, gear durability, or heavy structural loading?',
-                options: [
-                    { text: 'Extreme wear resistance & self-lubricating toughness (Nylon / PA-CF)', result: 'NYLON' },
-                    { text: 'High heat & impact structural enclosures (ABS / ASA / PC)', result: 'ABS_ASA_PC_CHOICE' }
-                ]
-            },
-            {
-                id: 'ABS_ASA_PC_CHOICE_MMU',
-                question: 'Select your high-temp tier (Enclosure required):',
-                options: [
-                    { text: 'Standard high-heat engineering (ABS)', result: 'ABS_MMU' },
-                    { text: 'Maximum industrial load & thermal stability (Polycarbonate / PC)', result: 'PC_MMU' }
-                ]
-            },
-            {
-                id: 'ABS_ASA_PC_CHOICE',
-                question: 'Select your high-temp tier (Enclosure required):',
+                question: 'Choose your high-temp tier:',
                 options: [
                     { text: 'Standard high-heat engineering (ABS)', result: 'ABS' },
-                    { text: 'Maximum industrial load & thermal stability (Polycarbonate / PC)', result: 'PC' }
+                    { text: 'Extreme wear-resistance or heavy structural load (Nylon / PC)', result: 'NYLON_PC_CHOICE' }
+                ]
+            },
+            {
+                id: 'NYLON_PC_CHOICE_MMU',
+                question: 'Select extreme engineering material:',
+                options: [
+                    { text: 'Nylon / PA-CF (Self-lubricating toughness & gear durability)', result: 'NYLON_MMU' },
+                    { text: 'Polycarbonate / PC (Extreme rigidity & heat stability)', result: 'PC_MMU' }
+                ]
+            },
+            {
+                id: 'NYLON_PC_CHOICE',
+                question: 'Select extreme engineering material:',
+                options: [
+                    { text: 'Nylon / PA-CF (Self-lubricating toughness & gear durability)', result: 'NYLON' },
+                    { text: 'Polycarbonate / PC (Extreme rigidity & heat stability)', result: 'PC' }
                 ]
             },
             {
@@ -303,7 +321,27 @@
                 adhesion: 'PEI Sheet cleaned with warm water and dish soap.',
                 drying: 'Low moisture risk. Dry at 45°C if humid.',
                 cost: '$',
-                slicing: '💡 **Multi-Material Support Tip:** Use **PVA** for water-soluble supports, or use **PETG as a support interface layer** against PLA (they naturally do not stick to each other, making clean break-away interfaces).'
+                slicing: '💡 **Support Surface Quality Tip:** Use **PETG as a support interface layer** under your PLA print (or vice versa). PLA and PETG do not bond to each other, creating a clean break-away interface layer that results in pristine bottom surface finishes over complex overhangs.'
+            },
+            'CF_PLA': {
+                title: 'CF-Reinforced PLA',
+                desc: 'Standard PLA infused with carbon fiber for increased structural rigidity, reduced warping, and a gorgeous matte textured finish. Requires a hardened nozzle.',
+                bestFor: 'Stiff mechanical brackets, non-heated internal printer parts.',
+                settings: 'Nozzle: 200–220°C (Hardened Steel) | Bed: 50–60°C | Enclosure: Not needed',
+                adhesion: 'PEI Sheet or textured plate. Great natural release.',
+                drying: 'Keep dry in a sealed box with desiccant (45°C for 4 hours if humid).',
+                cost: '$$',
+                slicing: '4+ walls for structural rigidity, 35%+ infill.'
+            },
+            'CF_PLA_MMU': {
+                title: 'CF-Reinforced PLA (with Multi-Material Support Options)',
+                desc: 'Carbon-fiber infused PLA for enhanced stiffness and a clean matte texture.',
+                bestFor: 'Stiff brackets with complex geometry.',
+                settings: 'Nozzle: 200–220°C (Hardened Steel) | Bed: 50–60°C | Enclosure: Not needed',
+                adhesion: 'PEI Sheet washed with warm water and dish soap.',
+                drying: 'Keep dry in a sealed box with desiccant.',
+                cost: '$$',
+                slicing: '💡 **Support Surface Quality Tip:** Use an alternate interface material like PETG or soluble PVA to support complex internal cavities without harming the carbon fiber surface texture.'
             },
             'SILK_PLA': {
                 title: 'Silk PLA',
@@ -343,7 +381,27 @@
                 adhesion: 'PEI Sheet washed with warm water and dish soap (use glue stick release).',
                 drying: 'Dry at 65°C for 4 hours.',
                 cost: '$',
-                slicing: '💡 **Multi-Material Support Tip:** Use **PVA** for water-soluble supports, or use **PLA as a support interface layer** against PETG (they peel apart cleanly due to poor inter-material adhesion).'
+                slicing: '💡 **Support Surface Quality Tip:** Use **PLA as a support interface layer** under your PETG print. They peel apart cleanly due to natural inter-material incompatibility, yielding a glass-smooth overhang finish.'
+            },
+            'CF_PETG': {
+                title: 'CF-Reinforced PETG',
+                desc: 'PETG infused with carbon fiber for higher rigidity and a matte finish while maintaining PETG toughness.',
+                bestFor: 'Stiff structural brackets, high-performance functional prints.',
+                settings: 'Nozzle: 240–260°C (Hardened Steel) | Bed: 70–85°C | Enclosure: Not needed',
+                adhesion: 'Textured PEI plate works best.',
+                drying: 'Dry at 65°C for 4 hours in a desiccated box.',
+                cost: '$$',
+                slicing: '4 walls, 40% infill for maximum mechanical leverage.'
+            },
+            'CF_PETG_MMU': {
+                title: 'CF-Reinforced PETG (with Multi-Material Support Options)',
+                desc: 'Carbon-fiber infused PETG for enhanced stiffness and toughness.',
+                bestFor: 'High-performance structural prints with complex overhangs.',
+                settings: 'Nozzle: 240–260°C (Hardened Steel) | Bed: 70–85°C | Enclosure: Not needed',
+                adhesion: 'Textured PEI plate.',
+                drying: 'Dry at 65°C for 4 hours.',
+                cost: '$$',
+                slicing: '💡 **Support Surface Quality Tip:** Pair with PLA support interface layers to keep complex mechanical cavities clean and precise.'
             },
             'ABS': {
                 title: 'ABS',
@@ -363,7 +421,7 @@
                 adhesion: 'PEI plate washed with dish soap + glue stick release.',
                 drying: 'Dry at 70°C for 4 hours.',
                 cost: '$',
-                slicing: '💡 **Multi-Material Support Tip:** Use HIPS as a soluble support material for ABS (dissolves cleanly in limonene).'
+                slicing: '💡 **Support Surface Quality Tip:** Use **HIPS** as a soluble support material for ABS (dissolves cleanly in D-limonene) to achieve flawless overhang surfaces.'
             },
             'ASA': {
                 title: 'ASA',
@@ -383,7 +441,7 @@
                 adhesion: 'Textured PEI sheet washed with warm water and dish soap.',
                 drying: 'Dry at 70°C for 4 hours.',
                 cost: '$$',
-                slicing: '💡 **Multi-Material Support Tip:** Use HIPS as a soluble support material for clean overhang separation.'
+                slicing: '💡 **Support Surface Quality Tip:** Utilize HIPS as a soluble support material to maintain the high weather and UV integrity of ASA parts without manual scraping.'
             },
             'CF_ASA': {
                 title: 'CF-Reinforced ASA',
@@ -403,7 +461,7 @@
                 adhesion: 'Textured PEI plate with active chamber heat.',
                 drying: 'Dry thoroughly at 70°C for 6 hours.',
                 cost: '$$$',
-                slicing: '💡 **Multi-Material Support Tip:** Use HIPS for soluble support interfaces, and ensure your multi-material switcher handles abrasive fiber filaments safely.'
+                slicing: '💡 **Support Surface Quality Tip:** Use HIPS for soluble support interfaces to keep intricate exterior frames free of scarring.'
             },
             'NYLON': {
                 title: 'Nylon (PA / PA-CF)',
@@ -423,7 +481,7 @@
                 adhesion: 'Specialized Garolite (G10) or PVA glue bed preparation.',
                 drying: 'Extremely hygroscopic! Must print directly from an active dry box.',
                 cost: '$$$ (Premium)',
-                slicing: '💡 **Multi-Material Support Tip:** Nylon requires high temps and specialized support polymers (like specialty high-temp soluble supports); standard multi-material hubs may experience severe stringing with Nylon.'
+                slicing: '💡 **Support Surface Quality Tip:** Nylon requires high printing temperatures; ensure your multi-material switcher uses high-temp specialized support polymers if attempting soluble interfaces.'
             },
             'PC': {
                 title: 'PC (Polycarbonate)',
@@ -443,7 +501,7 @@
                 adhesion: 'Specialized engineering plate adhesive or glue stick barrier.',
                 drying: 'Highly hygroscopic! Must be actively dried at 80°C for 6-8 hours.',
                 cost: '$$$',
-                slicing: '💡 **Multi-Material Support Tip:** Ensure your multi-material setup can handle high extrusion temperatures required for PC.'
+                slicing: '💡 **Support Surface Quality Tip:** Ensure your multi-material setup can handle the elevated hotend temperatures required for polycarbonate.'
             },
             'PP': {
                 title: 'PP (Polypropylene)',
@@ -530,7 +588,7 @@
                 </div>
             `;
             document.getElementById('progress-wrapper').style.display = 'none';
-            document.getElementById('restart-container').classList.remove('hidden');
+            document.getElementById('restart-container').classList.add('hidden');
         }
 
         function updateProgress() {
