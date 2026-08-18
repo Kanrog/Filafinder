@@ -135,7 +135,7 @@
                 options: [
                     { text: 'Aesthetics / Visual Display Models', next: 'aesthetic_type' },
                     { text: 'Functional 3D Printer Parts & Mechanical Components', next: 'environment_location' },
-                    { text: 'Flexibility, Bending, or Living Hinges', next: 'flex_type' }
+                    { text: 'Flexibility, Bending, or Living Hinges', next: 'printer_type_flex' }
                 ]
             },
             // --- AESTHETICS BRANCH ---
@@ -150,11 +150,11 @@
             },
             // --- FLEXIBILITY BRANCH ---
             {
-                id: 'flex_type',
-                question: 'What kind of flexibility do you need?',
+                id: 'printer_type_flex',
+                question: 'What kind of multi-material or printer hardware setup are you using for flexible parts?',
                 options: [
-                    { text: 'Flexible & rubber-like (Gaskets, feet, phone cases)', result: 'TPU' },
-                    { text: 'Semi-rigid with extreme fatigue resistance (Living hinges)', result: 'PP' }
+                    { text: 'Standard Filament Changer / Bowden Hub (e.g., AMS, MMU)', result: 'TPU_CHANGER_WARNING' },
+                    { text: 'Direct Drive / Independent Toolchanger Setup', result: 'TPU' }
                 ]
             },
             // --- FUNCTIONAL / ENVIRONMENT BRANCH ---
@@ -162,24 +162,40 @@
                 id: 'environment_location',
                 question: 'Where will this functional part be used?',
                 options: [
-                    { text: 'Indoor (Protected room environment)', next: 'printer_part_temp_indoor' },
+                    { text: 'Indoor (Protected room environment)', next: 'mmu_check_indoor' },
                     { text: 'Outdoor (Exposed to sunlight, UV, and weather elements)', next: 'outdoor_material_choice' }
                 ]
             },
             {
-                id: 'printer_part_temp_indoor',
-                question: 'Are you using a multi-material system (like an AMS or MMU) to combine rigid parts with flexible elements or alternate support interfaces?',
+                id: 'mmu_check_indoor',
+                question: 'Are you using a multi-material system (like an AMS or MMU) or looking for support interface recommendations?',
                 options: [
-                    { text: 'Yes, utilizing multi-material / soluble supports (e.g., PVA interface)', result: 'SOLUBLE_SUPPORT' },
-                    { text: 'No, standard single-material print', next: 'indoor_stress_tier' }
+                    { text: 'Yes, using an AMS/MMU / Need support interface advice', next: 'printer_part_temp_indoor_mmu' },
+                    { text: 'No, standard single-material print setup', next: 'printer_part_temp_indoor' }
                 ]
             },
             {
-                id: 'indoor_stress_tier',
+                id: 'printer_part_temp_indoor_mmu',
+                question: 'What temperature resistance and mechanical stress requirements do you have?',
+                options: [
+                    { text: 'Low/Medium temperature, general brackets & clips', next: 'pla_or_petg_tier_mmu' },
+                    { text: 'Extreme mechanical load, wear-resistance, or high heat (>90°C)', next: 'extreme_engineering_choice' }
+                ]
+            },
+            {
+                id: 'printer_part_temp_indoor',
                 question: 'What temperature resistance and mechanical stress requirements do you have?',
                 options: [
                     { text: 'Low/Medium temperature, general brackets & clips', next: 'pla_or_petg_tier' },
                     { text: 'Extreme mechanical load, wear-resistance, or high heat (>90°C)', next: 'extreme_engineering_choice' }
+                ]
+            },
+            {
+                id: 'pla_or_petg_tier_mmu',
+                question: 'Choose your preferred balance of ease and toughness (with support advice):',
+                options: [
+                    { text: 'Easy printing, high initial rigidity (PLA / CF-PLA)', result: 'PLA_MMU' },
+                    { text: 'Tough, chemical-resistant workhorse (PETG / CF-PETG)', result: 'PETG_MMU' }
                 ]
             },
             {
@@ -217,15 +233,25 @@
         ];
 
         const filamentData = {
-            'SOLUBLE_SUPPORT': {
-                title: 'Soluble / Alternate Interface Materials (PVA / Breakaway)',
-                desc: 'Ideal for multi-material units (AMS/MMU). Use PVA as a water-soluble support interface for complex internal geometries with PLA/PETG, or use specialized breakaway filaments for clean overhang removal.',
-                bestFor: 'Complex functional enclosures, interlocking assemblies, intricate internal channels.',
-                settings: 'Nozzle: Matches base material | Bed: Varies | Enclosure: Dry box mandatory',
-                adhesion: 'Standard PEI plate matching your primary build polymer.',
-                drying: 'Extremely hygroscopic. PVA must be stored in active dry boxes.',
-                cost: '$$ (Specialty)',
-                slicing: 'Set support interface layers to use the alternate material with flush volumes.'
+            'TPU_CHANGER_WARNING': {
+                title: 'TPU via Filament Changer Warning',
+                desc: '⚠️ **Warning:** Standard automated filament changers (like Bambu AMS or Prusa MMU) are generally **not compatible with flexible TPU filaments**. The elasticity causes friction and jams inside the long feed tubes and retraction gears. \n\n*Alternative:* If your setup is an **independent toolchanger**, you can print TPU just fine!',
+                bestFor: 'Flexible components (only if using a direct-drive toolchanger or manual single-spool feed).',
+                settings: 'Nozzle: 210–230°C | Bed: 30–60°C | Print Slow (20-30 mm/s)',
+                adhesion: 'PEI sheet washed with dish soap or painter’s tape.',
+                drying: 'Extremely hygroscopic. Dry at 50°C for 6 hours.',
+                cost: '$$',
+                slicing: 'Bypass your filament changer and feed TPU directly to a direct-drive extruder.'
+            },
+            'TPU': {
+                title: 'TPU (Direct Drive / Toolchanger)',
+                desc: 'A flexible, highly elastic elastomer with exceptional impact absorption and tear resistance. Because you are using a direct drive or toolchanger setup, you can run TPU smoothly without retraction jams.',
+                bestFor: 'Dampening feet, flexible joints, protective cases.',
+                settings: 'Nozzle: 210–230°C | Bed: 30–60°C | Print Slow (20-30 mm/s)',
+                adhesion: 'PEI sheet washed with dish soap or painter’s tape.',
+                drying: 'Extremely hygroscopic. Dry at 50°C for 6 hours before printing.',
+                cost: '$$',
+                slicing: '3-4 perimeters, low infill (10-20%) for softness or higher infill for firmness.'
             },
             'PLA': {
                 title: 'PLA (Standard)',
@@ -236,6 +262,16 @@
                 drying: 'Low moisture risk. Dry only if bubbling occurs (45°C for 4 hours).',
                 cost: '$ (Budget-friendly)',
                 slicing: '3+ walls, 25%+ infill (Gyroid or Grid).'
+            },
+            'PLA_MMU': {
+                title: 'PLA (with Multi-Material / Support Advice)',
+                desc: 'Standard PLA is fully compatible with automated filament changers and multi-material hubs.',
+                bestFor: 'Dry indoor printer parts, multi-color setups, complex overhangs.',
+                settings: 'Nozzle: 190–210°C | Bed: 50–60°C | Enclosure: Not needed',
+                adhesion: 'PEI Sheet cleaned with warm water and dish soap.',
+                drying: 'Low moisture risk. Dry at 45°C if humid.',
+                cost: '$',
+                slicing: '💡 **Support Tip:** Use **PVA** for water-soluble supports, or use **PETG as a support interface layer** against PLA (they naturally don\'t stick to each other, making clean break-away interfaces).'
             },
             'SILK_PLA': {
                 title: 'Silk PLA',
@@ -262,10 +298,20 @@
                 desc: 'A tough, dependable workhorse offering easy printing, medium temperature resistance, and great layer adhesion.',
                 bestFor: 'General mechanical parts, functional clips, water-resistant utility.',
                 settings: 'Nozzle: 230–250°C | Bed: 70–80°C | Enclosure: Not needed',
-                adhesion: 'PEI Sheet washed with warm water and dish soap. Use a light glue stick layer as a release agent to prevent glass/PEI pulling.',
+                adhesion: 'PEI Sheet washed with warm water and dish soap. Use a light glue stick layer as a release agent.',
                 drying: 'Moderately hygroscopic. Dry at 65°C for 4 hours if stringy.',
                 cost: '$',
                 slicing: '3-4 walls, 30%+ infill for functional load parts.'
+            },
+            'PETG_MMU': {
+                title: 'PETG (with Multi-Material / Support Advice)',
+                desc: 'A tough mechanical workhorse great for multi-material setups.',
+                bestFor: 'General mechanical parts, water-resistant utility.',
+                settings: 'Nozzle: 230–250°C | Bed: 70–80°C | Enclosure: Not needed',
+                adhesion: 'PEI Sheet washed with warm water and dish soap (use glue stick release).',
+                drying: 'Dry at 65°C for 4 hours.',
+                cost: '$',
+                slicing: '💡 **Support Tip:** Use **PVA** for water-soluble supports, or use **PLA as a support interface layer** against PETG (they peel apart cleanly due to poor inter-material adhesion).'
             },
             'ABS': {
                 title: 'ABS',
@@ -316,16 +362,6 @@
                 drying: 'Highly hygroscopic! Must be actively dried at 80°C for 6-8 hours.',
                 cost: '$$$',
                 slicing: '5 walls, 50%+ infill for extreme engineering stress.'
-            },
-            'TPU': {
-                title: 'TPU',
-                desc: 'A flexible, highly elastic elastomer with exceptional impact absorption and tear resistance.',
-                bestFor: 'Dampening feet, flexible joints, protective cases.',
-                settings: 'Nozzle: 210–230°C | Bed: 30–60°C | Print Slow (20-30 mm/s)',
-                adhesion: 'PEI sheet washed with dish soap or painter’s tape (TPU can bond too aggressively to clean glass/PEI).',
-                drying: 'Extremely hygroscopic. Dry at 50°C for 6 hours before printing.',
-                cost: '$$',
-                slicing: '3-4 perimeters, low infill (10-20%) for softness or higher infill for firmness.'
             },
             'PP': {
                 title: 'PP (Polypropylene)',
@@ -412,7 +448,7 @@
                 </div>
             `;
             document.getElementById('progress-wrapper').style.display = 'none';
-            document.getElementById('restart-container').classList.remove('hidden');
+            document.getElementById('restart-container').classList.add('hidden');
         }
 
         function updateProgress() {
