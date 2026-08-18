@@ -133,12 +133,29 @@
                 id: 'primary_goal',
                 question: 'What kind of project or part are you printing?',
                 options: [
-                    { text: 'Aesthetics / Visual Display Models', next: 'aesthetic_type' },
+                    { text: 'Aesthetics / Visual Display Models', next: 'mmu_check_aesthetic' },
                     { text: 'Functional 3D Printer Parts & Mechanical Components', next: 'environment_location' },
                     { text: 'Flexibility, Bending, or Living Hinges', next: 'printer_type_flex' }
                 ]
             },
             // --- AESTHETICS BRANCH ---
+            {
+                id: 'mmu_check_aesthetic',
+                question: 'Are you using a multi-material system or looking for alternate support interface options (like soluble PVA or cross-material release layers) to improve visual surface quality?',
+                options: [
+                    { text: 'Yes, using a multi-material setup / Want support interface advice', next: 'aesthetic_type_mmu' },
+                    { text: 'No, standard single-material print setup', next: 'aesthetic_type' }
+                ]
+            },
+            {
+                id: 'aesthetic_type_mmu',
+                question: 'What kind of surface finish are you looking for?',
+                options: [
+                    { text: 'High gloss, metallic sheen, or silky luster', result: 'SILK_PLA_MMU' },
+                    { text: 'Smooth, non-reflective matte texture', result: 'MATTE_PLA_MMU' },
+                    { text: 'Standard clean look', result: 'PLA_MMU' }
+                ]
+            },
             {
                 id: 'aesthetic_type',
                 question: 'What kind of surface finish are you looking for?',
@@ -316,7 +333,7 @@
             'PLA_MMU': {
                 title: 'PLA (with Multi-Material Support Options)',
                 desc: 'Standard PLA is fully compatible with automated filament changers and multi-material hubs.',
-                bestFor: 'Dry indoor printer parts, multi-color setups, complex overhangs.',
+                bestFor: 'Display models, cosmetic parts, multi-color aesthetic prints.',
                 settings: 'Nozzle: 190–210°C | Bed: 50–60°C | Enclosure: Not needed',
                 adhesion: 'PEI Sheet cleaned with warm water and dish soap.',
                 drying: 'Low moisture risk. Dry at 45°C if humid.',
@@ -353,6 +370,16 @@
                 cost: '$',
                 slicing: '2-3 walls, 15-20% infill.'
             },
+            'SILK_PLA_MMU': {
+                title: 'Silk PLA (with Multi-Material Support Options)',
+                desc: 'High-gloss aesthetic filament compatible with multi-material systems.',
+                bestFor: 'Vibrant display art, multi-color aesthetic models.',
+                settings: 'Nozzle: 200–220°C | Bed: 50–60°C | Enclosure: Not needed',
+                adhesion: 'Standard PEI plate cleaned with warm water and dish soap.',
+                drying: 'Sensitive to moisture over time; dry at 45°C.',
+                cost: '$',
+                slicing: '💡 **Support Surface Quality Tip:** Use PETG or PVA interfaces to maintain the glossy aesthetic finish on complex overhangs without scarring from manual support removal.'
+            },
             'MATTE_PLA': {
                 title: 'Matte PLA',
                 desc: 'Formulated to eliminate plastic shine, resulting in a smooth, flat stone or paper-like texture.',
@@ -362,6 +389,16 @@
                 drying: 'Dry at 45°C for 4 hours if brittle.',
                 cost: '$',
                 slicing: '3 walls for clean matte outer shells.'
+            },
+            'MATTE_PLA_MMU': {
+                title: 'Matte PLA (with Multi-Material Support Options)',
+                desc: 'Non-reflective matte aesthetic filament.',
+                bestFor: 'Architectural models and stealth-look decorative pieces.',
+                settings: 'Nozzle: 200–215°C | Bed: 50–60°C | Enclosure: Not needed',
+                adhesion: 'Standard PEI plate cleaned with warm water and dish soap.',
+                drying: 'Dry at 45°C for 4 hours if brittle.',
+                cost: '$',
+                slicing: '💡 **Support Surface Quality Tip:** Use alternate interface materials (like PETG) to ensure complex matte display models maintain clean support separations.'
             },
             'PETG': {
                 title: 'PETG',
@@ -588,7 +625,7 @@
                 </div>
             `;
             document.getElementById('progress-wrapper').style.display = 'none';
-            document.getElementById('restart-container').classList.add('hidden');
+            document.getElementById('restart-container').classList.remove('hidden');
         }
 
         function updateProgress() {
