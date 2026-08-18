@@ -42,7 +42,7 @@
             background: linear-gradient(135deg, #181124 0%, #221738 100%);
             border: 1.5px solid #d946ef;
             box-shadow: 0 0 10px rgba(217, 70, 239, 0.3);
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
         }
 
         .neon-button:hover {
@@ -54,6 +54,19 @@
 
         .neon-progress {
             box-shadow: 0 0 12px #f472b6;
+        }
+
+        /* Smooth Card Fade Transitions */
+        .card-transition {
+            transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+        .fade-out {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+        .fade-in {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
@@ -79,7 +92,7 @@
         </div>
 
         <!-- Question Container -->
-        <div id="quiz-container">
+        <div id="quiz-container" class="card-transition fade-in">
             <h2 id="question-text" class="text-xl md:text-2xl font-semibold mb-6 text-zinc-100 tracking-wide"></h2>
             <div id="options-container" class="space-y-4">
                 <!-- Dynamically injected options -->
@@ -333,7 +346,7 @@
             'PLA_MMU': {
                 title: 'PLA (with Multi-Material Support Options)',
                 desc: 'Standard PLA is fully compatible with automated filament changers and multi-material hubs.',
-                bestFor: 'Display models, cosmetic parts, multi-color aesthetic prints.',
+                bestFor: 'Dry indoor printer parts, multi-color setups, complex overhangs.',
                 settings: 'Nozzle: 190–210°C | Bed: 50–60°C | Enclosure: Not needed',
                 adhesion: 'PEI Sheet cleaned with warm water and dish soap.',
                 drying: 'Low moisture risk. Dry at 45°C if humid.',
@@ -556,20 +569,40 @@
         let historyStack = [];
 
         function startQuiz() {
-            currentStep = 'primary_goal';
-            historyStack = [];
+            transitionStep(() => {
+                currentStep = 'primary_goal';
+                historyStack = [];
+                
+                document.getElementById('quiz-container').innerHTML = `
+                    <h2 id="question-text" class="text-xl md:text-2xl font-semibold mb-6 text-zinc-100 tracking-wide"></h2>
+                    <div id="options-container" class="space-y-4"></div>
+                `;
+                
+                document.getElementById('progress-wrapper').style.display = 'block';
+                document.getElementById('restart-container').classList.add('hidden');
+                renderQuestionContent();
+            });
+        }
+
+        function transitionStep(callback) {
+            const container = document.getElementById('quiz-container');
+            container.classList.remove('fade-in');
+            container.classList.add('fade-out');
             
-            document.getElementById('quiz-container').innerHTML = `
-                <h2 id="question-text" class="text-xl md:text-2xl font-semibold mb-6 text-zinc-100 tracking-wide"></h2>
-                <div id="options-container" class="space-y-4"></div>
-            `;
-            
-            document.getElementById('progress-wrapper').style.display = 'block';
-            document.getElementById('restart-container').classList.add('hidden');
-            renderQuestion();
+            setTimeout(() => {
+                callback();
+                container.classList.remove('fade-out');
+                container.classList.add('fade-in');
+            }, 180); // Snappy transition timing
         }
 
         function renderQuestion() {
+            transitionStep(() => {
+                renderQuestionContent();
+            });
+        }
+
+        function renderQuestionContent() {
             const questionObj = questions.find(q => q.id === currentStep);
             document.getElementById('question-text').innerText = questionObj.question;
             
@@ -597,35 +630,37 @@
         }
 
         function renderResult(filamentKey) {
-            const data = filamentData[filamentKey] || {
-                title: filamentKey,
-                desc: 'Recommended material based on your configuration.',
-                bestFor: 'Targeted application use',
-                settings: 'Check roll specifications',
-                adhesion: 'Standard practices',
-                drying: 'Standard storage',
-                cost: '$',
-                slicing: 'Standard profiles'
-            };
+            transitionStep(() => {
+                const data = filamentData[filamentKey] || {
+                    title: filamentKey,
+                    desc: 'Recommended material based on your configuration.',
+                    bestFor: 'Targeted application use',
+                    settings: 'Check roll specifications',
+                    adhesion: 'Standard practices',
+                    drying: 'Standard storage',
+                    cost: '$',
+                    slicing: 'Standard profiles'
+                };
 
-            document.getElementById('quiz-container').innerHTML = `
-                <div class="text-center py-2">
-                    <span class="text-xs uppercase tracking-wider bg-teal-950 text-teal-300 border border-teal-500/50 px-4 py-1.5 rounded-full font-bold shadow-[0_0_10px_rgba(45,212,191,0.3)]">Optimal Choice</span>
-                    <h2 class="text-3xl font-extrabold neon-text-teal mt-4 mb-3">${data.title}</h2>
-                    <p class="text-zinc-300 text-base md:text-lg mb-6 leading-relaxed">${data.desc}</p>
-                    
-                    <div class="bg-zinc-950/80 p-5 rounded-xl text-left mb-6 border border-teal-500/30 space-y-3 shadow-[inset_0_0_15px_rgba(45,212,191,0.05)]">
-                        <p class="text-sm"><strong class="neon-text-pink">Best For:</strong> ${data.bestFor}</p>
-                        <p class="text-sm"><strong class="neon-text-pink">Typical Settings:</strong> ${data.settings}</p>
-                        <p class="text-sm"><strong class="neon-text-pink">Bed Adhesion:</strong> ${data.adhesion}</p>
-                        <p class="text-sm"><strong class="neon-text-pink">Drying & Storage:</strong> ${data.drying}</p>
-                        <p class="text-sm"><strong class="neon-text-pink">Cost Tier:</strong> ${data.cost}</p>
-                        <p class="text-sm"><strong class="neon-text-pink">Slicing Pro-Tip:</strong> ${data.slicing}</p>
+                document.getElementById('quiz-container').innerHTML = `
+                    <div class="text-center py-2">
+                        <span class="text-xs uppercase tracking-wider bg-teal-950 text-teal-300 border border-teal-500/50 px-4 py-1.5 rounded-full font-bold shadow-[0_0_10px_rgba(45,212,191,0.3)]">Optimal Choice</span>
+                        <h2 class="text-3xl font-extrabold neon-text-teal mt-4 mb-3">${data.title}</h2>
+                        <p class="text-zinc-300 text-base md:text-lg mb-6 leading-relaxed">${data.desc}</p>
+                        
+                        <div class="bg-zinc-950/80 p-5 rounded-xl text-left mb-6 border border-teal-500/30 space-y-3 shadow-[inset_0_0_15px_rgba(45,212,191,0.05)]">
+                            <p class="text-sm"><strong class="neon-text-pink">Best For:</strong> ${data.bestFor}</p>
+                            <p class="text-sm"><strong class="neon-text-pink">Typical Settings:</strong> ${data.settings}</p>
+                            <p class="text-sm"><strong class="neon-text-pink">Bed Adhesion:</strong> ${data.adhesion}</p>
+                            <p class="text-sm"><strong class="neon-text-pink">Drying & Storage:</strong> ${data.drying}</p>
+                            <p class="text-sm"><strong class="neon-text-pink">Cost Tier:</strong> ${data.cost}</p>
+                            <p class="text-sm"><strong class="neon-text-pink">Slicing Pro-Tip:</strong> ${data.slicing}</p>
+                        </div>
                     </div>
-                </div>
-            `;
-            document.getElementById('progress-wrapper').style.display = 'none';
-            document.getElementById('restart-container').classList.remove('hidden');
+                `;
+                document.getElementById('progress-wrapper').style.display = 'none';
+                document.getElementById('restart-container').classList.remove('hidden');
+            });
         }
 
         function updateProgress() {
