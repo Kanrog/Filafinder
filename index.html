@@ -61,6 +61,7 @@
 
     <div class="max-w-2xl w-full neon-box rounded-2xl p-8 md:p-12 backdrop-blur-md relative">
         
+        <!-- Top Action Bar (Compare Modal Trigger) -->
         <div class="flex justify-between items-center mb-6 border-b border-zinc-700/60 pb-4">
             <div>
                 <h1 class="text-2xl md:text-4xl font-extrabold neon-text-teal tracking-wider uppercase">Filafinder</h1>
@@ -72,16 +73,20 @@
             </button>
         </div>
 
+        <!-- Progress Bar -->
         <div id="progress-wrapper" class="w-full bg-zinc-900 h-3 rounded-full mb-8 overflow-hidden border border-zinc-700">
             <div id="progress-bar" class="bg-pink-500 h-full transition-all duration-300 neon-progress" style="width: 20%;"></div>
         </div>
 
+        <!-- Question Container -->
         <div id="quiz-container">
             <h2 id="question-text" class="text-xl md:text-2xl font-semibold mb-6 text-zinc-100 tracking-wide"></h2>
             <div id="options-container" class="space-y-4">
-                </div>
+                <!-- Dynamically injected options -->
+            </div>
         </div>
 
+        <!-- Restart Button (Hidden initially) -->
         <div id="restart-container" class="hidden text-center mt-8">
             <button onclick="startQuiz()" class="bg-pink-600 hover:bg-pink-500 text-white font-bold text-lg px-8 py-3 rounded-xl transition-colors shadow-[0_0_20px_rgba(244,114,182,0.5)] hover:shadow-[0_0_35px_rgba(244,114,182,0.8)] border border-pink-400">
                 Start Over
@@ -89,6 +94,7 @@
         </div>
     </div>
 
+    <!-- Compare Materials Drawer / Modal -->
     <div id="compare-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
         <div class="neon-box max-w-3xl w-full max-h-[90vh] overflow-y-auto rounded-2xl p-6 md:p-8 relative">
             <div class="flex justify-between items-center mb-6 border-b border-zinc-700 pb-4">
@@ -123,14 +129,6 @@
 
     <script>
         const questions = [
-            {
-                id: 'ams_check',
-                question: 'Are you using a multi-material system (e.g., Bambu AMS, Prusa MMU) for multi-color or soluble supports?',
-                options: [
-                    { text: 'Yes, multi-material printing / automated spool switching', result: 'AMS_SUPPORT' },
-                    { text: 'No, standard single-spool setup', next: 'primary_goal' }
-                ]
-            },
             {
                 id: 'primary_goal',
                 question: 'What kind of project or part are you printing?',
@@ -170,6 +168,14 @@
             },
             {
                 id: 'printer_part_temp_indoor',
+                question: 'Are you using a multi-material system (like an AMS or MMU) to combine rigid parts with flexible elements or alternate support interfaces?',
+                options: [
+                    { text: 'Yes, utilizing multi-material / soluble supports (e.g., PVA interface)', result: 'SOLUBLE_SUPPORT' },
+                    { text: 'No, standard single-material print', next: 'indoor_stress_tier' }
+                ]
+            },
+            {
+                id: 'indoor_stress_tier',
                 question: 'What temperature resistance and mechanical stress requirements do you have?',
                 options: [
                     { text: 'Low/Medium temperature, general brackets & clips', next: 'pla_or_petg_tier' },
@@ -211,22 +217,22 @@
         ];
 
         const filamentData = {
-            'AMS_SUPPORT': {
-                title: 'Multi-Material & Support Filaments (PVA / Breakaway)',
-                desc: 'Optimized for multi-spool automated hubs. Use PVA for water-soluble supports with PLA/PETG, or specialized breakaway materials for clean overhang interfaces.',
-                bestFor: 'Complex geometric models, internal cavities, multi-color aesthetic prints.',
-                settings: 'Nozzle: Varies by base | Bed: Varies | Enclosure: Dry storage mandatory',
-                adhesion: 'Standard PEI plate.',
-                drying: 'Extremely critical! PVA must be kept dry inside active AMS silica units.',
+            'SOLUBLE_SUPPORT': {
+                title: 'Soluble / Alternate Interface Materials (PVA / Breakaway)',
+                desc: 'Ideal for multi-material units (AMS/MMU). Use PVA as a water-soluble support interface for complex internal geometries with PLA/PETG, or use specialized breakaway filaments for clean overhang removal.',
+                bestFor: 'Complex functional enclosures, interlocking assemblies, intricate internal channels.',
+                settings: 'Nozzle: Matches base material | Bed: Varies | Enclosure: Dry box mandatory',
+                adhesion: 'Standard PEI plate matching your primary build polymer.',
+                drying: 'Extremely hygroscopic. PVA must be stored in active dry boxes.',
                 cost: '$$ (Specialty)',
-                slicing: 'Configure flushing volumes and dedicated support interface layers.'
+                slicing: 'Set support interface layers to use the alternate material with flush volumes.'
             },
             'PLA': {
                 title: 'PLA (Standard)',
                 desc: 'The easiest filament to print with excellent dimensional accuracy and high initial strength/rigidity, but low temperature resistance (softens around 50–60°C).',
                 bestFor: 'Dry indoor printer parts, brackets, easy prototypes.',
                 settings: 'Nozzle: 190–210°C | Bed: 50–60°C | Enclosure: Not needed',
-                adhesion: 'PEI Sheet (Clean with dish soap). No glue required.',
+                adhesion: 'PEI Sheet (Clean with warm water and dish soap). No glue required.',
                 drying: 'Low moisture risk. Dry only if bubbling occurs (45°C for 4 hours).',
                 cost: '$ (Budget-friendly)',
                 slicing: '3+ walls, 25%+ infill (Gyroid or Grid).'
@@ -236,7 +242,7 @@
                 desc: 'Blended with additives to yield a high-gloss, reflective, shiny finish that brilliantly masks layer lines.',
                 bestFor: 'Display art, cosmetic models, statues.',
                 settings: 'Nozzle: 200–220°C | Bed: 50–60°C | Enclosure: Not needed',
-                adhesion: 'Standard PEI plate.',
+                adhesion: 'Standard PEI plate cleaned with warm water and dish soap.',
                 drying: 'Sensitive to moisture over time; dry at 45°C if stringing occurs.',
                 cost: '$',
                 slicing: '2-3 walls, 15-20% infill.'
@@ -246,7 +252,7 @@
                 desc: 'Formulated to eliminate plastic shine, resulting in a smooth, flat stone or paper-like texture.',
                 bestFor: 'Architectural models, modern aesthetic displays.',
                 settings: 'Nozzle: 200–215°C | Bed: 50–60°C | Enclosure: Not needed',
-                adhesion: 'Standard PEI plate.',
+                adhesion: 'Standard PEI plate cleaned with warm water and dish soap.',
                 drying: 'Dry at 45°C for 4 hours if brittle.',
                 cost: '$',
                 slicing: '3 walls for clean matte outer shells.'
@@ -256,7 +262,7 @@
                 desc: 'A tough, dependable workhorse offering easy printing, medium temperature resistance, and great layer adhesion.',
                 bestFor: 'General mechanical parts, functional clips, water-resistant utility.',
                 settings: 'Nozzle: 230–250°C | Bed: 70–80°C | Enclosure: Not needed',
-                adhesion: 'PEI Sheet with a light glue stick layer (acts as a release agent to prevent glass bed pulling/tearing).',
+                adhesion: 'PEI Sheet washed with warm water and dish soap. Use a light glue stick layer as a release agent to prevent glass/PEI pulling.',
                 drying: 'Moderately hygroscopic. Dry at 65°C for 4 hours if stringy.',
                 cost: '$',
                 slicing: '3-4 walls, 30%+ infill for functional load parts.'
@@ -266,7 +272,7 @@
                 desc: 'Provides high impact resistance and elevated temperature resistance, but strictly requires a heated, enclosed printer and proper ventilation.',
                 bestFor: 'Indoor functional engineering parts, high-heat items.',
                 settings: 'Nozzle: 240–260°C | Bed: 90–110°C | Enclosure: Required',
-                adhesion: 'PEI plate with ABS juice or glue stick slurry.',
+                adhesion: 'PEI plate washed with dish soap, plus a glue stick layer for release.',
                 drying: 'Dry at 70°C for 4 hours.',
                 cost: '$',
                 slicing: '4+ walls, 40%+ infill. High perimeters add massive strength.'
@@ -276,7 +282,7 @@
                 desc: 'Mechanically similar to ABS with high temperature resistance, but adds superior UV and weather resistance for outdoor use.',
                 bestFor: 'Outdoor printer parts, automotive trim, weather-exposed housings.',
                 settings: 'Nozzle: 240–260°C | Bed: 90–100°C | Enclosure: Required',
-                adhesion: 'Textured PEI sheet with brim for large parts to prevent corner lifting.',
+                adhesion: 'Textured PEI sheet washed with warm water and dish soap.',
                 drying: 'Dry at 70°C for 4 hours.',
                 cost: '$$',
                 slicing: '4 walls, 35% gyroid infill.'
@@ -296,7 +302,7 @@
                 desc: 'An elite engineering polymer delivering unmatched impact strength, wear resistance, and low friction properties for heavy-duty mechanisms.',
                 bestFor: 'High-stress functional gears, mechanical bushings, industrial hinges.',
                 settings: 'Nozzle: 260–290°C (Hardened Steel) | Bed: 80–100°C | Enclosure: Fully Enclosed',
-                adhesion: 'Magellan glue or specialized Garolite (G10) bed surface.',
+                adhesion: 'Specialized Garolite (G10) or PVA glue bed preparation.',
                 drying: 'Extremely hygroscopic! Must print directly from an active dry box at 70–80°C.',
                 cost: '$$$ (Premium)',
                 slicing: '5+ walls, 40-50% infill. Keep parts away from ambient humidity.'
@@ -306,7 +312,7 @@
                 desc: 'An extreme engineering thermoplastic boasting massive impact strength, high rigidity, and thermal stability up to 110–140°C.',
                 bestFor: 'Heavy-load industrial components, high-heat enclosures.',
                 settings: 'Nozzle: 260–310°C | Bed: 110–135°C | Enclosure: Fully Enclosed & Vented',
-                adhesion: 'Magellan glue or specialized engineering plate adhesive.',
+                adhesion: 'Specialized engineering plate adhesive or glue stick barrier.',
                 drying: 'Highly hygroscopic! Must be actively dried at 80°C for 6-8 hours.',
                 cost: '$$$',
                 slicing: '5 walls, 50%+ infill for extreme engineering stress.'
@@ -316,7 +322,7 @@
                 desc: 'A flexible, highly elastic elastomer with exceptional impact absorption and tear resistance.',
                 bestFor: 'Dampening feet, flexible joints, protective cases.',
                 settings: 'Nozzle: 210–230°C | Bed: 30–60°C | Print Slow (20-30 mm/s)',
-                adhesion: 'PEI sheet or painter’s tape (TPU can bond too aggressively to clean glass).',
+                adhesion: 'PEI sheet washed with dish soap or painter’s tape (TPU can bond too aggressively to clean glass/PEI).',
                 drying: 'Extremely hygroscopic. Dry at 50°C for 6 hours before printing.',
                 cost: '$$',
                 slicing: '3-4 perimeters, low infill (10-20%) for softness or higher infill for firmness.'
@@ -333,11 +339,11 @@
             }
         };
 
-        let currentStep = 'ams_check';
+        let currentStep = 'primary_goal';
         let historyStack = [];
 
         function startQuiz() {
-            currentStep = 'ams_check';
+            currentStep = 'primary_goal';
             historyStack = [];
             
             document.getElementById('quiz-container').innerHTML = `
