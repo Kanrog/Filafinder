@@ -61,7 +61,6 @@
 
     <div class="max-w-2xl w-full neon-box rounded-2xl p-8 md:p-12 backdrop-blur-md relative">
         
-        <!-- Top Action Bar (Compare Modal Trigger) -->
         <div class="flex justify-between items-center mb-6 border-b border-zinc-700/60 pb-4">
             <div>
                 <h1 class="text-2xl md:text-4xl font-extrabold neon-text-teal tracking-wider uppercase">Filafinder</h1>
@@ -73,20 +72,16 @@
             </button>
         </div>
 
-        <!-- Progress Bar -->
         <div id="progress-wrapper" class="w-full bg-zinc-900 h-3 rounded-full mb-8 overflow-hidden border border-zinc-700">
             <div id="progress-bar" class="bg-pink-500 h-full transition-all duration-300 neon-progress" style="width: 20%;"></div>
         </div>
 
-        <!-- Question Container -->
         <div id="quiz-container">
             <h2 id="question-text" class="text-xl md:text-2xl font-semibold mb-6 text-zinc-100 tracking-wide"></h2>
             <div id="options-container" class="space-y-4">
-                <!-- Dynamically injected options -->
-            </div>
+                </div>
         </div>
 
-        <!-- Restart Button (Hidden initially) -->
         <div id="restart-container" class="hidden text-center mt-8">
             <button onclick="startQuiz()" class="bg-pink-600 hover:bg-pink-500 text-white font-bold text-lg px-8 py-3 rounded-xl transition-colors shadow-[0_0_20px_rgba(244,114,182,0.5)] hover:shadow-[0_0_35px_rgba(244,114,182,0.8)] border border-pink-400">
                 Start Over
@@ -94,7 +89,6 @@
         </div>
     </div>
 
-    <!-- Compare Materials Drawer / Modal -->
     <div id="compare-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
         <div class="neon-box max-w-3xl w-full max-h-[90vh] overflow-y-auto rounded-2xl p-6 md:p-8 relative">
             <div class="flex justify-between items-center mb-6 border-b border-zinc-700 pb-4">
@@ -110,31 +104,39 @@
                             <th class="p-3">Ease of Print</th>
                             <th class="p-3">Strength / Rigidity</th>
                             <th class="p-3">Max Temp</th>
-                            <th class="p-3">UV Resistance</th>
+                            <th class="p-3">Cost Tier</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-zinc-700/40 text-zinc-300">
-                        <tr><td class="p-3 font-semibold text-white">PLA</td><td class="p-3 text-teal-400">Very Easy</td><td class="p-3">Medium-High (Brittle)</td><td class="p-3">Low (55°C)</td><td class="p-3 text-pink-400">Poor</td></tr>
-                        <tr><td class="p-3 font-semibold text-white">CF-PLA</td><td class="p-3 text-teal-400">Easy*</td><td class="p-3 text-teal-300">High Stiffness</td><td class="p-3">Low (60°C)</td><td class="p-3 text-pink-400">Poor</td></tr>
-                        <tr><td class="p-3 font-semibold text-white">PETG</td><td class="p-3 text-teal-400">Easy</td><td class="p-3">High (Tough)</td><td class="p-3">Medium (75°C)</td><td class="p-3 text-yellow-300">Moderate</td></tr>
-                        <tr><td class="p-3 font-semibold text-white">ABS / ASA</td><td class="p-3 text-yellow-300">Hard (Enclosed)</td><td class="p-3">High (Impact Resistant)</td><td class="p-3 text-teal-300">High (95°C+)</td><td class="p-3 text-teal-400">Excellent (ASA)</td></tr>
-                        <tr><td class="p-3 font-semibold text-white">TPU</td><td class="p-3 text-yellow-300">Moderate (Slow)</td><td class="p-3">Flexible / Elastic</td><td class="p-3">Low-Medium</td><td class="p-3 text-yellow-300">Moderate</td></tr>
-                        <tr><td class="p-3 font-semibold text-white">PC</td><td class="p-3 text-pink-400">Very Hard</td><td class="p-3 text-teal-300">Extreme</td><td class="p-3 text-teal-300">Very High (115°C+)</td><td class="p-3 text-teal-400">Good</td></tr>
+                        <tr><td class="p-3 font-semibold text-white">PLA</td><td class="p-3 text-teal-400">Very Easy</td><td class="p-3">Medium-High</td><td class="p-3">Low (55°C)</td><td class="p-3">$</td></tr>
+                        <tr><td class="p-3 font-semibold text-white">PETG</td><td class="p-3 text-teal-400">Easy</td><td class="p-3">High (Tough)</td><td class="p-3">Medium (75°C)</td><td class="p-3">$</td></tr>
+                        <tr><td class="p-3 font-semibold text-white">ABS / ASA</td><td class="p-3 text-yellow-300">Hard (Enclosed)</td><td class="p-3">High (Impact)</td><td class="p-3 text-teal-300">High (95°C+)</td><td class="p-3">$$</td></tr>
+                        <tr><td class="p-3 font-semibold text-white">TPU</td><td class="p-3 text-yellow-300">Moderate</td><td class="p-3">Flexible / Elastic</td><td class="p-3">Low-Medium</td><td class="p-3">$$</td></tr>
+                        <tr><td class="p-3 font-semibold text-white">Nylon (PA)</td><td class="p-3 text-pink-400">Very Hard</td><td class="p-3 text-teal-300">Extreme Toughness</td><td class="p-3 text-teal-300">Very High (120°C+)</td><td class="p-3">$$$</td></tr>
+                        <tr><td class="p-3 font-semibold text-white">PC</td><td class="p-3 text-pink-400">Expert</td><td class="p-3 text-teal-300">Extreme Rigidity</td><td class="p-3 text-teal-300">Very High (130°C+)</td><td class="p-3">$$$</td></tr>
                     </tbody>
                 </table>
             </div>
-            <p class="text-zinc-500 text-xs mt-4">*CF variants require a hardened steel nozzle.</p>
+            <p class="text-zinc-500 text-xs mt-4">*Specialty engineering filaments require specific drying and hardware setups.</p>
         </div>
     </div>
 
     <script>
         const questions = [
             {
+                id: 'ams_check',
+                question: 'Are you using a multi-material system (e.g., Bambu AMS, Prusa MMU) for multi-color or soluble supports?',
+                options: [
+                    { text: 'Yes, multi-material printing / automated spool switching', result: 'AMS_SUPPORT' },
+                    { text: 'No, standard single-spool setup', next: 'primary_goal' }
+                ]
+            },
+            {
                 id: 'primary_goal',
                 question: 'What kind of project or part are you printing?',
                 options: [
                     { text: 'Aesthetics / Visual Display Models', next: 'aesthetic_type' },
-                    { text: 'Functional 3D Printer Parts & Mechanical Components', next: 'printer_part_temp' },
+                    { text: 'Functional 3D Printer Parts & Mechanical Components', next: 'environment_location' },
                     { text: 'Flexibility, Bending, or Living Hinges', next: 'flex_type' }
                 ]
             },
@@ -157,59 +159,68 @@
                     { text: 'Semi-rigid with extreme fatigue resistance (Living hinges)', result: 'PP' }
                 ]
             },
-            // --- PRINTER PARTS BRANCH ---
+            // --- FUNCTIONAL / ENVIRONMENT BRANCH ---
             {
-                id: 'printer_part_temp',
-                question: 'What temperature resistance and printer setup do you have for your functional part?',
+                id: 'environment_location',
+                question: 'Where will this functional part be used?',
                 options: [
-                    { text: 'Low temperature resistance is fine (Easy printing, high structural rigidity)', next: 'pla_or_cf' },
-                    { text: 'Medium temperature resistance (Easy printing, good toughness)', next: 'petg_or_cf' },
-                    { text: 'High temperature resistance (Requires an enclosed printer)', next: 'abs_asa_branch' }
+                    { text: 'Indoor (Protected room environment)', next: 'printer_part_temp_indoor' },
+                    { text: 'Outdoor (Exposed to sunlight, UV, and weather elements)', next: 'outdoor_material_choice' }
                 ]
             },
             {
-                id: 'pla_or_cf',
-                question: 'Do you want maximum strength/rigidity with a fiber-reinforced version (requires hardened nozzle)?',
+                id: 'printer_part_temp_indoor',
+                question: 'What temperature resistance and mechanical stress requirements do you have?',
                 options: [
-                    { text: 'Yes, give me CF/GF-reinforced PLA (Hardened nozzle ready)', result: 'CF_PLA' },
-                    { text: 'No, standard easy-to-print PLA is fine (Standard brass nozzle)', result: 'PLA' }
+                    { text: 'Low/Medium temperature, general brackets & clips', next: 'pla_or_petg_tier' },
+                    { text: 'Extreme mechanical load, wear-resistance, or high heat (>90°C)', next: 'extreme_engineering_choice' }
                 ]
             },
             {
-                id: 'petg_or_cf',
-                question: 'Do you want enhanced rigidity with a carbon/glass fiber reinforced PETG (requires hardened nozzle)?',
+                id: 'pla_or_petg_tier',
+                question: 'Choose your preferred balance of ease and toughness:',
                 options: [
-                    { text: 'Yes, CF-PETG for extra stiffness and toughness', result: 'CF_PETG' },
-                    { text: 'No, standard easy-to-print PETG is fine', result: 'PETG' }
+                    { text: 'Easy printing, high initial rigidity (PLA / CF-PLA)', result: 'PLA' },
+                    { text: 'Tough, chemical-resistant workhorse (PETG / CF-PETG)', result: 'PETG' }
                 ]
             },
             {
-                id: 'abs_asa_branch',
-                question: 'What are your specific environmental and hardware requirements for high-temp parts?',
+                id: 'extreme_engineering_choice',
+                question: 'Do you require extreme friction reduction, gear durability, or heavy structural loading?',
                 options: [
-                    { text: 'Standard high-temp mechanical part (Enclosed printer required)', next: 'abs_asa_choice' },
-                    { text: 'Extreme industrial load or max stiffness with fiber reinforcement (Hardened nozzle + Enclosure)', result: 'CF_ASA_PC' }
+                    { text: 'Extreme wear resistance & self-lubricating toughness (Nylon / PA-CF)', result: 'NYLON' },
+                    { text: 'High heat & impact structural enclosures (ABS / ASA / PC)', result: 'ABS_ASA_PC_CHOICE' }
                 ]
             },
             {
-                id: 'abs_asa_choice',
-                question: 'Will the part be used indoors or outdoors under UV exposure?',
+                id: 'ABS_ASA_PC_CHOICE',
+                question: 'Select your high-temp tier (Enclosure required):',
                 options: [
-                    { text: 'Indoor mechanical / general high-temp part (ABS)', result: 'ABS' },
-                    { text: 'Outdoor part exposed to sunlight and weather (ASA)', result: 'ASA' }
+                    { text: 'Standard high-heat engineering (ABS)', result: 'ABS' },
+                    { text: 'Maximum industrial load & thermal stability (Polycarbonate / PC)', result: 'PC' }
                 ]
             },
             {
-                id: 'CF_ASA_PC',
-                question: 'Choose your high-end engineering material:',
+                id: 'outdoor_material_choice',
+                question: 'What are your hardware capabilities for outdoor components?',
                 options: [
-                    { text: 'CF-ASA (Enclosure + Hardened nozzle for outdoor high-strength parts)', result: 'CF_ASA' },
-                    { text: 'Polycarbonate / PC (Extreme heat & industrial load, fully enclosed)', result: 'PC' }
+                    { text: 'Standard enclosed printer (UV resistant without carbon fiber)', result: 'ASA' },
+                    { text: 'Enclosed printer + Hardened nozzle (Maximum outdoor strength & rigidity)', result: 'CF_ASA' }
                 ]
             }
         ];
 
         const filamentData = {
+            'AMS_SUPPORT': {
+                title: 'Multi-Material & Support Filaments (PVA / Breakaway)',
+                desc: 'Optimized for multi-spool automated hubs. Use PVA for water-soluble supports with PLA/PETG, or specialized breakaway materials for clean overhang interfaces.',
+                bestFor: 'Complex geometric models, internal cavities, multi-color aesthetic prints.',
+                settings: 'Nozzle: Varies by base | Bed: Varies | Enclosure: Dry storage mandatory',
+                adhesion: 'Standard PEI plate.',
+                drying: 'Extremely critical! PVA must be kept dry inside active AMS silica units.',
+                cost: '$$ (Specialty)',
+                slicing: 'Configure flushing volumes and dedicated support interface layers.'
+            },
             'PLA': {
                 title: 'PLA (Standard)',
                 desc: 'The easiest filament to print with excellent dimensional accuracy and high initial strength/rigidity, but low temperature resistance (softens around 50–60°C).',
@@ -217,16 +228,8 @@
                 settings: 'Nozzle: 190–210°C | Bed: 50–60°C | Enclosure: Not needed',
                 adhesion: 'PEI Sheet (Clean with dish soap). No glue required.',
                 drying: 'Low moisture risk. Dry only if bubbling occurs (45°C for 4 hours).',
+                cost: '$ (Budget-friendly)',
                 slicing: '3+ walls, 25%+ infill (Gyroid or Grid).'
-            },
-            'CF_PLA': {
-                title: 'CF-Reinforced PLA',
-                desc: 'Standard PLA infused with carbon fiber for increased structural rigidity, reduced warping, and a gorgeous matte textured finish.',
-                bestFor: 'Stiff mechanical brackets, non-heated internal printer parts.',
-                settings: 'Nozzle: 200–220°C (Hardened Steel) | Bed: 50–60°C | Enclosure: Not needed',
-                adhesion: 'PEI Sheet or textured plate. Great natural release.',
-                drying: 'Keep dry in a sealed box with desiccant (45°C for 4 hours if humid).',
-                slicing: '4+ walls for structural rigidity, 35%+ infill.'
             },
             'SILK_PLA': {
                 title: 'Silk PLA',
@@ -235,6 +238,7 @@
                 settings: 'Nozzle: 200–220°C | Bed: 50–60°C | Enclosure: Not needed',
                 adhesion: 'Standard PEI plate.',
                 drying: 'Sensitive to moisture over time; dry at 45°C if stringing occurs.',
+                cost: '$',
                 slicing: '2-3 walls, 15-20% infill.'
             },
             'MATTE_PLA': {
@@ -244,6 +248,7 @@
                 settings: 'Nozzle: 200–215°C | Bed: 50–60°C | Enclosure: Not needed',
                 adhesion: 'Standard PEI plate.',
                 drying: 'Dry at 45°C for 4 hours if brittle.',
+                cost: '$',
                 slicing: '3 walls for clean matte outer shells.'
             },
             'PETG': {
@@ -253,16 +258,8 @@
                 settings: 'Nozzle: 230–250°C | Bed: 70–80°C | Enclosure: Not needed',
                 adhesion: 'PEI Sheet with a light glue stick layer (acts as a release agent to prevent glass bed pulling/tearing).',
                 drying: 'Moderately hygroscopic. Dry at 65°C for 4 hours if stringy.',
+                cost: '$',
                 slicing: '3-4 walls, 30%+ infill for functional load parts.'
-            },
-            'CF_PETG': {
-                title: 'CF-Reinforced PETG',
-                desc: 'PETG infused with carbon fiber for higher rigidity and a matte finish while maintaining PETG toughness.',
-                bestFor: 'Stiff structural brackets, high-performance functional prints.',
-                settings: 'Nozzle: 240–260°C (Hardened Steel) | Bed: 70–85°C | Enclosure: Not needed',
-                adhesion: 'Textured PEI plate works best.',
-                drying: 'Dry at 65°C for 4 hours in a desiccated box.',
-                slicing: '4 walls, 40% infill for maximum mechanical leverage.'
             },
             'ABS': {
                 title: 'ABS',
@@ -271,6 +268,7 @@
                 settings: 'Nozzle: 240–260°C | Bed: 90–110°C | Enclosure: Required',
                 adhesion: 'PEI plate with ABS juice or glue stick slurry.',
                 drying: 'Dry at 70°C for 4 hours.',
+                cost: '$',
                 slicing: '4+ walls, 40%+ infill. High perimeters add massive strength.'
             },
             'ASA': {
@@ -280,6 +278,7 @@
                 settings: 'Nozzle: 240–260°C | Bed: 90–100°C | Enclosure: Required',
                 adhesion: 'Textured PEI sheet with brim for large parts to prevent corner lifting.',
                 drying: 'Dry at 70°C for 4 hours.',
+                cost: '$$',
                 slicing: '4 walls, 35% gyroid infill.'
             },
             'CF_ASA': {
@@ -289,7 +288,18 @@
                 settings: 'Nozzle: 250–270°C (Hardened Steel) | Bed: 95–110°C | Enclosure: Required',
                 adhesion: 'Textured PEI plate with active chamber heat.',
                 drying: 'Dry thoroughly at 70°C for 6 hours.',
+                cost: '$$$',
                 slicing: '4+ walls, 45% infill.'
+            },
+            'NYLON': {
+                title: 'Nylon (PA / PA-CF)',
+                desc: 'An elite engineering polymer delivering unmatched impact strength, wear resistance, and low friction properties for heavy-duty mechanisms.',
+                bestFor: 'High-stress functional gears, mechanical bushings, industrial hinges.',
+                settings: 'Nozzle: 260–290°C (Hardened Steel) | Bed: 80–100°C | Enclosure: Fully Enclosed',
+                adhesion: 'Magellan glue or specialized Garolite (G10) bed surface.',
+                drying: 'Extremely hygroscopic! Must print directly from an active dry box at 70–80°C.',
+                cost: '$$$ (Premium)',
+                slicing: '5+ walls, 40-50% infill. Keep parts away from ambient humidity.'
             },
             'PC': {
                 title: 'PC (Polycarbonate)',
@@ -298,6 +308,7 @@
                 settings: 'Nozzle: 260–310°C | Bed: 110–135°C | Enclosure: Fully Enclosed & Vented',
                 adhesion: 'Magellan glue or specialized engineering plate adhesive.',
                 drying: 'Highly hygroscopic! Must be actively dried at 80°C for 6-8 hours.',
+                cost: '$$$',
                 slicing: '5 walls, 50%+ infill for extreme engineering stress.'
             },
             'TPU': {
@@ -307,6 +318,7 @@
                 settings: 'Nozzle: 210–230°C | Bed: 30–60°C | Print Slow (20-30 mm/s)',
                 adhesion: 'PEI sheet or painter’s tape (TPU can bond too aggressively to clean glass).',
                 drying: 'Extremely hygroscopic. Dry at 50°C for 6 hours before printing.',
+                cost: '$$',
                 slicing: '3-4 perimeters, low infill (10-20%) for softness or higher infill for firmness.'
             },
             'PP': {
@@ -316,15 +328,16 @@
                 settings: 'Nozzle: 220–250°C | Bed: 85–100°C',
                 adhesion: 'Extremely difficult to stick. Requires genuine PP packaging tape or specialized adhesion sheets on the bed.',
                 drying: 'Keep dry at 60°C for 4 hours.',
+                cost: '$$',
                 slicing: '3-4 walls with slow print speeds.'
             }
         };
 
-        let currentStep = 'primary_goal';
+        let currentStep = 'ams_check';
         let historyStack = [];
 
         function startQuiz() {
-            currentStep = 'primary_goal';
+            currentStep = 'ams_check';
             historyStack = [];
             
             document.getElementById('quiz-container').innerHTML = `
@@ -372,6 +385,7 @@
                 settings: 'Check roll specifications',
                 adhesion: 'Standard practices',
                 drying: 'Standard storage',
+                cost: '$',
                 slicing: 'Standard profiles'
             };
 
@@ -386,6 +400,7 @@
                         <p class="text-sm"><strong class="neon-text-pink">Typical Settings:</strong> ${data.settings}</p>
                         <p class="text-sm"><strong class="neon-text-pink">Bed Adhesion:</strong> ${data.adhesion}</p>
                         <p class="text-sm"><strong class="neon-text-pink">Drying & Storage:</strong> ${data.drying}</p>
+                        <p class="text-sm"><strong class="neon-text-pink">Cost Tier:</strong> ${data.cost}</p>
                         <p class="text-sm"><strong class="neon-text-pink">Slicing Pro-Tip:</strong> ${data.slicing}</p>
                     </div>
                 </div>
