@@ -163,15 +163,23 @@
                 question: 'Where will this functional part be used?',
                 options: [
                     { text: 'Indoor (Protected room environment)', next: 'mmu_check_indoor' },
-                    { text: 'Outdoor (Exposed to sunlight, UV, and weather elements)', next: 'outdoor_material_choice' }
+                    { text: 'Outdoor (Exposed to sunlight, UV, and weather elements)', next: 'mmu_check_outdoor' }
                 ]
             },
             {
                 id: 'mmu_check_indoor',
-                question: 'Are you using a multi-material system (like an AMS or MMU) or looking for support interface recommendations?',
+                question: 'Are you using a multi-material system (like an AMS or MMU) or looking for alternate support material options?',
                 options: [
-                    { text: 'Yes, using an AMS/MMU / Need support interface advice', next: 'printer_part_temp_indoor_mmu' },
+                    { text: 'Yes, using a multi-material setup / Need support interface advice', next: 'printer_part_temp_indoor_mmu' },
                     { text: 'No, standard single-material print setup', next: 'printer_part_temp_indoor' }
+                ]
+            },
+            {
+                id: 'mmu_check_outdoor',
+                question: 'Are you using a multi-material system (like an AMS or MMU) for your outdoor part?',
+                options: [
+                    { text: 'Yes, multi-material outdoor setup', next: 'outdoor_material_choice_mmu' },
+                    { text: 'No, standard single-material print setup', next: 'outdoor_material_choice' }
                 ]
             },
             {
@@ -179,7 +187,7 @@
                 question: 'What temperature resistance and mechanical stress requirements do you have?',
                 options: [
                     { text: 'Low/Medium temperature, general brackets & clips', next: 'pla_or_petg_tier_mmu' },
-                    { text: 'Extreme mechanical load, wear-resistance, or high heat (>90°C)', next: 'extreme_engineering_choice' }
+                    { text: 'Extreme mechanical load, wear-resistance, or high heat (>90°C)', next: 'extreme_engineering_choice_mmu' }
                 ]
             },
             {
@@ -192,7 +200,7 @@
             },
             {
                 id: 'pla_or_petg_tier_mmu',
-                question: 'Choose your preferred balance of ease and toughness (with support advice):',
+                question: 'Choose your preferred balance of ease and toughness:',
                 options: [
                     { text: 'Easy printing, high initial rigidity (PLA / CF-PLA)', result: 'PLA_MMU' },
                     { text: 'Tough, chemical-resistant workhorse (PETG / CF-PETG)', result: 'PETG_MMU' }
@@ -207,6 +215,14 @@
                 ]
             },
             {
+                id: 'extreme_engineering_choice_mmu',
+                question: 'Do you require extreme friction reduction, gear durability, or heavy structural loading?',
+                options: [
+                    { text: 'Extreme wear resistance & self-lubricating toughness (Nylon / PA-CF)', result: 'NYLON_MMU' },
+                    { text: 'High heat & impact structural enclosures (ABS / ASA / PC)', result: 'ABS_ASA_PC_CHOICE_MMU' }
+                ]
+            },
+            {
                 id: 'extreme_engineering_choice',
                 question: 'Do you require extreme friction reduction, gear durability, or heavy structural loading?',
                 options: [
@@ -215,11 +231,27 @@
                 ]
             },
             {
+                id: 'ABS_ASA_PC_CHOICE_MMU',
+                question: 'Select your high-temp tier (Enclosure required):',
+                options: [
+                    { text: 'Standard high-heat engineering (ABS)', result: 'ABS_MMU' },
+                    { text: 'Maximum industrial load & thermal stability (Polycarbonate / PC)', result: 'PC_MMU' }
+                ]
+            },
+            {
                 id: 'ABS_ASA_PC_CHOICE',
                 question: 'Select your high-temp tier (Enclosure required):',
                 options: [
                     { text: 'Standard high-heat engineering (ABS)', result: 'ABS' },
                     { text: 'Maximum industrial load & thermal stability (Polycarbonate / PC)', result: 'PC' }
+                ]
+            },
+            {
+                id: 'outdoor_material_choice_mmu',
+                question: 'What are your hardware capabilities for outdoor components?',
+                options: [
+                    { text: 'Standard enclosed printer (UV resistant without carbon fiber)', result: 'ASA_MMU' },
+                    { text: 'Enclosed printer + Hardened nozzle (Maximum outdoor strength & rigidity)', result: 'CF_ASA_MMU' }
                 ]
             },
             {
@@ -235,7 +267,7 @@
         const filamentData = {
             'TPU_CHANGER_WARNING': {
                 title: 'TPU via Filament Changer Warning',
-                desc: '⚠️ **Warning:** Standard automated filament changers (like Bambu AMS or Prusa MMU) are generally **not compatible with flexible TPU filaments**. The elasticity causes friction and jams inside the long feed tubes and retraction gears. \n\n*Alternative:* If your setup is an **independent toolchanger**, you can print TPU just fine!',
+                desc: '⚠️ **Warning:** Standard automated filament changers (like Bambu AMS or Prusa MMU) are generally **not compatible with flexible TPU filaments**. The elasticity causes friction and jams inside long feed tubes and retraction gears.\n\n*Note:* Independent toolchangers can print TPU just fine!',
                 bestFor: 'Flexible components (only if using a direct-drive toolchanger or manual single-spool feed).',
                 settings: 'Nozzle: 210–230°C | Bed: 30–60°C | Print Slow (20-30 mm/s)',
                 adhesion: 'PEI sheet washed with dish soap or painter’s tape.',
@@ -264,14 +296,14 @@
                 slicing: '3+ walls, 25%+ infill (Gyroid or Grid).'
             },
             'PLA_MMU': {
-                title: 'PLA (with Multi-Material / Support Advice)',
+                title: 'PLA (with Multi-Material Support Options)',
                 desc: 'Standard PLA is fully compatible with automated filament changers and multi-material hubs.',
                 bestFor: 'Dry indoor printer parts, multi-color setups, complex overhangs.',
                 settings: 'Nozzle: 190–210°C | Bed: 50–60°C | Enclosure: Not needed',
                 adhesion: 'PEI Sheet cleaned with warm water and dish soap.',
                 drying: 'Low moisture risk. Dry at 45°C if humid.',
                 cost: '$',
-                slicing: '💡 **Support Tip:** Use **PVA** for water-soluble supports, or use **PETG as a support interface layer** against PLA (they naturally don\'t stick to each other, making clean break-away interfaces).'
+                slicing: '💡 **Multi-Material Support Tip:** Use **PVA** for water-soluble supports, or use **PETG as a support interface layer** against PLA (they naturally do not stick to each other, making clean break-away interfaces).'
             },
             'SILK_PLA': {
                 title: 'Silk PLA',
@@ -304,14 +336,14 @@
                 slicing: '3-4 walls, 30%+ infill for functional load parts.'
             },
             'PETG_MMU': {
-                title: 'PETG (with Multi-Material / Support Advice)',
+                title: 'PETG (with Multi-Material Support Options)',
                 desc: 'A tough mechanical workhorse great for multi-material setups.',
                 bestFor: 'General mechanical parts, water-resistant utility.',
                 settings: 'Nozzle: 230–250°C | Bed: 70–80°C | Enclosure: Not needed',
                 adhesion: 'PEI Sheet washed with warm water and dish soap (use glue stick release).',
                 drying: 'Dry at 65°C for 4 hours.',
                 cost: '$',
-                slicing: '💡 **Support Tip:** Use **PVA** for water-soluble supports, or use **PLA as a support interface layer** against PETG (they peel apart cleanly due to poor inter-material adhesion).'
+                slicing: '💡 **Multi-Material Support Tip:** Use **PVA** for water-soluble supports, or use **PLA as a support interface layer** against PETG (they peel apart cleanly due to poor inter-material adhesion).'
             },
             'ABS': {
                 title: 'ABS',
@@ -323,6 +355,16 @@
                 cost: '$',
                 slicing: '4+ walls, 40%+ infill. High perimeters add massive strength.'
             },
+            'ABS_MMU': {
+                title: 'ABS (with Multi-Material Support Options)',
+                desc: 'High-impact engineering plastic compatible with multi-material enclosures.',
+                bestFor: 'Indoor functional engineering parts under load.',
+                settings: 'Nozzle: 240–260°C | Bed: 90–110°C | Enclosure: Required',
+                adhesion: 'PEI plate washed with dish soap + glue stick release.',
+                drying: 'Dry at 70°C for 4 hours.',
+                cost: '$',
+                slicing: '💡 **Multi-Material Support Tip:** Use HIPS as a soluble support material for ABS (dissolves cleanly in limonene).'
+            },
             'ASA': {
                 title: 'ASA',
                 desc: 'Mechanically similar to ABS with high temperature resistance, but adds superior UV and weather resistance for outdoor use.',
@@ -332,6 +374,16 @@
                 drying: 'Dry at 70°C for 4 hours.',
                 cost: '$$',
                 slicing: '4 walls, 35% gyroid infill.'
+            },
+            'ASA_MMU': {
+                title: 'ASA (with Multi-Material Support Options)',
+                desc: 'Weather-resistant outdoor polymer compatible with multi-material systems.',
+                bestFor: 'Outdoor functional parts requiring multi-color or complex support.',
+                settings: 'Nozzle: 240–260°C | Bed: 90–100°C | Enclosure: Required',
+                adhesion: 'Textured PEI sheet washed with warm water and dish soap.',
+                drying: 'Dry at 70°C for 4 hours.',
+                cost: '$$',
+                slicing: '💡 **Multi-Material Support Tip:** Use HIPS as a soluble support material for clean overhang separation.'
             },
             'CF_ASA': {
                 title: 'CF-Reinforced ASA',
@@ -343,6 +395,16 @@
                 cost: '$$$',
                 slicing: '4+ walls, 45% infill.'
             },
+            'CF_ASA_MMU': {
+                title: 'CF-Reinforced ASA (with Multi-Material Support Options)',
+                desc: 'Rigid carbon-fiber infused outdoor polymer.',
+                bestFor: 'Stiff, weather-resistant structural frames.',
+                settings: 'Nozzle: 250–270°C (Hardened Steel) | Bed: 95–110°C | Enclosure: Required',
+                adhesion: 'Textured PEI plate with active chamber heat.',
+                drying: 'Dry thoroughly at 70°C for 6 hours.',
+                cost: '$$$',
+                slicing: '💡 **Multi-Material Support Tip:** Use HIPS for soluble support interfaces, and ensure your multi-material switcher handles abrasive fiber filaments safely.'
+            },
             'NYLON': {
                 title: 'Nylon (PA / PA-CF)',
                 desc: 'An elite engineering polymer delivering unmatched impact strength, wear resistance, and low friction properties for heavy-duty mechanisms.',
@@ -353,6 +415,16 @@
                 cost: '$$$ (Premium)',
                 slicing: '5+ walls, 40-50% infill. Keep parts away from ambient humidity.'
             },
+            'NYLON_MMU': {
+                title: 'Nylon (PA / PA-CF with Multi-Material Advice)',
+                desc: 'Extreme performance engineering polymer.',
+                bestFor: 'High-stress heavy-duty components.',
+                settings: 'Nozzle: 260–290°C (Hardened Steel) | Bed: 80–100°C | Enclosure: Fully Enclosed',
+                adhesion: 'Specialized Garolite (G10) or PVA glue bed preparation.',
+                drying: 'Extremely hygroscopic! Must print directly from an active dry box.',
+                cost: '$$$ (Premium)',
+                slicing: '💡 **Multi-Material Support Tip:** Nylon requires high temps and specialized support polymers (like specialty high-temp soluble supports); standard multi-material hubs may experience severe stringing with Nylon.'
+            },
             'PC': {
                 title: 'PC (Polycarbonate)',
                 desc: 'An extreme engineering thermoplastic boasting massive impact strength, high rigidity, and thermal stability up to 110–140°C.',
@@ -362,6 +434,16 @@
                 drying: 'Highly hygroscopic! Must be actively dried at 80°C for 6-8 hours.',
                 cost: '$$$',
                 slicing: '5 walls, 50%+ infill for extreme engineering stress.'
+            },
+            'PC_MMU': {
+                title: 'PC (Polycarbonate with Multi-Material Advice)',
+                desc: 'Extreme thermal and impact resistance workhorse.',
+                bestFor: 'High-load industrial components.',
+                settings: 'Nozzle: 260–310°C | Bed: 110–135°C | Enclosure: Fully Enclosed & Vented',
+                adhesion: 'Specialized engineering plate adhesive or glue stick barrier.',
+                drying: 'Highly hygroscopic! Must be actively dried at 80°C for 6-8 hours.',
+                cost: '$$$',
+                slicing: '💡 **Multi-Material Support Tip:** Ensure your multi-material setup can handle high extrusion temperatures required for PC.'
             },
             'PP': {
                 title: 'PP (Polypropylene)',
@@ -448,7 +530,7 @@
                 </div>
             `;
             document.getElementById('progress-wrapper').style.display = 'none';
-            document.getElementById('restart-container').classList.add('hidden');
+            document.getElementById('restart-container').classList.remove('hidden');
         }
 
         function updateProgress() {
